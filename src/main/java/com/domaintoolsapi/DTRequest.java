@@ -28,8 +28,12 @@ public class DTRequest {
 	 * Format of the request
 	 */
 	private String format;
+	/**
+	 * The DomainTool's response
+	 */
+	private DTResponse domainToolsResponse;
 
-	/*
+	/**
 	 * Parameters
 	 */
 	private String parameters;
@@ -76,6 +80,22 @@ public class DTRequest {
 	 * @return DomainTools's response
 	 */
 	public DTResponse execute(){
+		//We check if we haven't already a response
+		if(format.equals(DTConstants.JSON) && domainToolsResponse.getResponseJSON().isEmpty()
+				|| format.equals(DTConstants.HTML) && domainToolsResponse.getResponseHTML().isEmpty()
+				|| format.equals(DTConstants.XML) && domainToolsResponse.getResponseXML().isEmpty()
+				|| format.equals(DTConstants.OBJECT) && domainToolsResponse.getResponseObject() == null
+				)
+			return DTService.execute(this);
+		//else we return it
+		else return getDomainToolsResponse();
+	}
+	
+	/**
+	 * Re-execute the request
+	 * @return the request's response
+	 */
+	public DTResponse refresh(){
 		return DTService.execute(this);
 	}
 	
@@ -97,14 +117,6 @@ public class DTRequest {
 	public DTRequest where(String parameters) {
 		this.parameters = parameters;
 		return this;
-	}
-
-	/**
-	 * Re-execute the request
-	 * @return the request's response
-	 */
-	public DTResponse refresh(){
-		return execute();
 	}
 
 	protected DomainTools getdomainTools() {
@@ -139,13 +151,21 @@ public class DTRequest {
 		return parameters_map;
 	}
 	
+	public void setDomainToolsResponse(DTResponse domainToolsResponse) {
+		this.domainToolsResponse = domainToolsResponse;
+	}
+
+	public DTResponse getDomainToolsResponse() {
+		return domainToolsResponse;
+	}
+
 	/**
 	 * Return the request response in XML format
 	 * @return the XML's String
 	 */
 	public String toXML() {
 		setformat(DTConstants.XML);
-		return  DTService.execute(this).getXMresponse();
+		return  DTService.execute(this).getResponseXML();
 	}
 
 	/**
@@ -154,7 +174,7 @@ public class DTRequest {
 	 */
 	public String toJSON() {
 		setformat(DTConstants.JSON);
-		return  DTService.execute(this).getJSON_response();
+		return  DTService.execute(this).getResponseJSON();
 	}
 	
 	/**
@@ -163,7 +183,7 @@ public class DTRequest {
 	 */
 	public String toHTML() {
 		setformat(DTConstants.HTML);
-		return  DTService.execute(this).getHTMresponse();
+		return  DTService.execute(this).getResponseHTML();
 	}
 	
 	/**
@@ -173,7 +193,7 @@ public class DTRequest {
 	 * @return a JsonNode
 	 */
 	public JsonNode toObject() {
-		setformat(DTConstants.JSON);
-		return  DTService.execute(this).getObject_response();
+		setformat(DTConstants.OBJECT);
+		return  DTService.execute(this).getResponseObject();
 	}
 }

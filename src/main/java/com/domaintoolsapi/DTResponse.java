@@ -10,37 +10,47 @@ import org.codehaus.jackson.JsonNode;
 
 public class DTResponse {
 	
-	private String JSON_response;
-	private String HTMresponse;
-	private String XMresponse;
+	private String responseJSON;
+	private String responseHTML;
+	private String responseXML;
+	private JsonNode responseObject;
 
-	public DTResponse() {}
-
-	protected String getJSON_response() {
-		return JSON_response;
+	public DTResponse() {
+		this.responseJSON = "";
+		this.responseHTML = "";
+		this.responseXML = "";
+		this.responseObject = null;
 	}
 
-	protected void setJSON_response(String JSON_response) {
-		this.JSON_response = JSON_response;
+	protected String getResponseJSON() {
+		return responseJSON;
 	}
 
-	protected String getHTMresponse() {
-		return HTMresponse;
+	protected void setResponseJSON(String responseJSON) {
+		this.responseJSON = responseJSON;
 	}
 
-	protected void setHTMresponse(String HTMresponse) {
-		this.HTMresponse = HTMresponse;
+	protected String getResponseHTML() {
+		return responseHTML;
 	}
 
-	protected String getXMresponse() {
-		return XMresponse;
+	protected void setResponseHTML(String responseHTML) {
+		this.responseHTML = responseHTML;
 	}
 
-	protected void setXMresponse(String XMresponse) {
-		this.XMresponse = XMresponse;
+	protected String getResponseXML() {
+		return responseXML;
+	}
+
+	protected void setResponseXML(String responseXML) {
+		this.responseXML = responseXML;
 	}
 	
-	protected JsonNode getObject_response(){
-		return DTNodesService.getDomainToolsNode(getJSON_response());
+	public void setResponseObject(JsonNode responseObject) {
+		this.responseObject = responseObject;
+	}
+
+	protected JsonNode getResponseObject(){
+		return this.responseObject;
 	}
 }

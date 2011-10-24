@@ -109,7 +109,7 @@ public class DTURLService {
 	private static void addResponseFormat(DTRequest domainToolsRequest){
 		if(domainToolsRequest.getformat().equals(DTConstants.XML)) 
 			string_url=string_url.concat("&"+DTConstants.FORMAT_XML);
-		if(domainToolsRequest.getformat().equals(DTConstants.HTML)) 
+		else if(domainToolsRequest.getformat().equals(DTConstants.HTML)) 
 			string_url=string_url.concat("&"+DTConstants.FORMAT_HTML);
 	}
 }

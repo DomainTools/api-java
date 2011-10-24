@@ -14,6 +14,8 @@ public class DTConstants {
 	protected final static String JSON = "json";
 	protected final static String XML = "xml";
 	protected final static String HTML = "html";
+	protected final static String OBJECT = "object";
+	
 	protected final static String FORMAT_JSON = "format=json";
 	protected final static String FORMAT_XML = "format=xml";
 	protected final static String FORMAT_HTML = "format=html";

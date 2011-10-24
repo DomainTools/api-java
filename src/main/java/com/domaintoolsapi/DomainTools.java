@@ -9,21 +9,34 @@ package com.domaintoolsapi;
  */
 public class DomainTools {
 
-	private String api_username;
-	private String api_key;
+	private String apiUsername;
+	private String apiKey;
 	private boolean signed;
 
 	/**
 	 * Construct a DomainTools API Object
 	 * Most requests sent to the DomainTools API require authentication.
 	 * You have to specify your API username and your API Key
-	 * @param p_api_username
-	 * @param p_api_key
+	 * @param apiUsername
+	 * @param apiKey
 	 */
-	public DomainTools(String p_api_username, String p_api_key){
-		this.api_username = p_api_username;
-		this.api_key = p_api_key;
+	public DomainTools(String apiUsername, String apiKey){
+		this.apiUsername = apiUsername;
+		this.apiKey = apiKey;
 		this.signed = true;
+	}
+	
+	/**
+	 * Construct a DomainTools API Object
+	 * You have to specify your API username and your API Key
+	 * @param apiUsername
+	 * @param apiKey
+	 * @param signed if you want to use the hashed message authentication code or not
+	 */
+	public DomainTools(String apiUsername, String apiKey, boolean signed){
+		this.apiUsername = apiUsername;
+		this.apiKey = apiKey;
+		this.signed = signed;
 	}
 
 	/**
@@ -80,11 +93,11 @@ public class DomainTools {
 	}
 
 	protected String getapi_username() {
-		return api_username;
+		return apiUsername;
 	}
 
 	public String getapi_key() {
-		return api_key;
+		return apiKey;
 	}
 
 	public boolean issigned() {

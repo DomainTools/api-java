@@ -22,15 +22,14 @@ public class DTService {
 	/**
 	 * Default line separator
 	 */
-	private static String line_separator ;
+	private static String lineSeparator ;
 	private static URL url;
 
 	protected static DTResponse execute(DTRequest domainToolsRequest){
 		//If no format specified, set Json
 		if(domainToolsRequest.getformat().isEmpty()) domainToolsRequest.setformat(DTConstants.JSON);
 		getLineSeparator();		
-		url = DTURLService.buildURL(domainToolsRequest);	
-		System.out.println("URL :\n"+url.toString());
+		url = DTURLService.buildURL(domainToolsRequest);
 		return doRequest(domainToolsRequest);
 	}
 
@@ -48,13 +47,18 @@ public class DTService {
 			String sLine;
 			while ((sLine = bufReader.readLine()) != null){
 				stringBuilder_response.append(sLine);
-				stringBuilder_response.append(line_separator);
+				stringBuilder_response.append(lineSeparator);
 			}
-			if(domainToolsRequest.getformat().equals(DTConstants.XML)) domainToolsResponse.setXMresponse(stringBuilder_response.toString());
-			else if(domainToolsRequest.getformat().equals(DTConstants.HTML)) domainToolsResponse.setHTMresponse(stringBuilder_response.toString());
-			else domainToolsResponse.setJSON_response(stringBuilder_response.toString());
+			if(domainToolsRequest.getformat().equals(DTConstants.XML))
+				domainToolsResponse.setResponseXML(stringBuilder_response.toString());
+			else if(domainToolsRequest.getformat().equals(DTConstants.HTML))
+				domainToolsResponse.setResponseHTML(stringBuilder_response.toString());
+			else if(domainToolsRequest.getformat().equals(DTConstants.OBJECT))
+				domainToolsResponse.setResponseObject(DTNodesService.getDomainToolsNode(stringBuilder_response.toString()));
+			else domainToolsResponse.setResponseJSON(stringBuilder_response.toString());
+			//We set the response in the request to not reuse it later
+			domainToolsRequest.setDomainToolsResponse(domainToolsResponse);
 
-			httpConnection.disconnect();
 		} catch (ProtocolException e) {
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
@@ -64,16 +68,18 @@ public class DTService {
 			e.printStackTrace();
 		}catch (Exception e) {
 			e.printStackTrace();
+		}finally{
+			httpConnection.disconnect();
 		}
 		return domainToolsResponse;
 	}
 
 	private static void getLineSeparator() {
 		try{
-			line_separator = System.getProperty("line.separator");
+			lineSeparator = System.getProperty("line.separator");
 		}
 		catch (Exception e){
-			line_separator = "\n";
+			lineSeparator = "\n";
 		}
 	}
 }

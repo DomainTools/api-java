@@ -8,11 +8,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class DTNodesService {
 
-	protected static JsonNode getDomainToolsNode(String JSON_response){
+	protected static JsonNode getDomainToolsNode(String responseJSON){
 		ObjectMapper m = new ObjectMapper();
 		JsonNode rootNode = null;
 		try {
-			rootNode = (JsonNode) m.readTree(JSON_response);
+			rootNode = (JsonNode) m.readTree(responseJSON);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

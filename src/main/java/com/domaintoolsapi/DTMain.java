@@ -24,13 +24,12 @@ public class DTMain {
 		
 		DomainTools domainTools = new DomainTools("yourname", "");
 		
-		DTRequest dtRequest = domainTools.use("whois").signed(true);
-//		domainToolsRequest.where("terms=DomainTools%20LLC|Seattle&mode=purchase");
-		String res = dtRequest.on("domaintools.com1").toXML();
+		DTRequest domainToolsRequest = domainTools.use("reverse-whois").signed(true);
+		domainToolsRequest.where("terms=DomainTools%20LLC|Seattle&mode=purchase");
+//		String res = dtRequest.on("domaintools.com1").toXML();
+//		System.out.println(res);
 
-		System.out.println(res);
-
-//		JsonNode response1 = domainToolsRequest.toObject();
-//		System.out.println("1 : "+response1.get("response").get("domain_count"));
+		JsonNode response1 = domainToolsRequest.toObject();
+		System.out.println("1 : "+response1.get("response").get("domain_count"));
 	}
 }
