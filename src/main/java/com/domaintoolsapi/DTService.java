@@ -9,6 +9,15 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
+import org.codehaus.jackson.JsonNode;
+
+import com.domaintoolsapi.exceptions.BadRequestException;
+import com.domaintoolsapi.exceptions.DomainToolsException;
+import com.domaintoolsapi.exceptions.InternalServerException;
+import com.domaintoolsapi.exceptions.NotAuthorizedException;
+import com.domaintoolsapi.exceptions.NotFoundException;
+import com.domaintoolsapi.exceptions.ServiceUnavailableException;
+
 /**
  * This class allows to execute the DomainTools's requests
  * @author Julien SOSIN
@@ -27,44 +36,74 @@ public class DTService {
 
 	protected static DTResponse execute(DTRequest domainToolsRequest){
 		//If no format specified, set Json
-		if(domainToolsRequest.getformat().isEmpty()) domainToolsRequest.setformat(DTConstants.JSON);
+		if(domainToolsRequest.getFormat().isEmpty()) domainToolsRequest.setFormat(DTConstants.JSON);
 		getLineSeparator();		
 		url = DTURLService.buildURL(domainToolsRequest);
 		return doRequest(domainToolsRequest);
 	}
 
 	private static DTResponse doRequest(DTRequest domainToolsRequest){
-		DTResponse domainToolsResponse = new DTResponse();
+		int response_code = 0;
+		DTResponse domainToolsResponse = new DTResponse(domainToolsRequest.getFormat(), domainToolsRequest.getDomain(), domainToolsRequest.getProduct(), domainToolsRequest.getParameters(), domainToolsRequest.getParameters_map());
 		StringBuilder stringBuilder_response = new StringBuilder();
+		String sLine;
+		String errorMessage = "";
 		try{
 			httpConnection = (HttpURLConnection) url.openConnection();
 			httpConnection.setRequestMethod("GET");
 			httpConnection.setDoOutput(true);
+			response_code = httpConnection.getResponseCode();
 
+			if(response_code >= 400 ){
+				//The request fail
+				//We try to get some informations
+				InputStream  errorResponse = httpConnection.getErrorStream();
+				BufferedReader errorBufReader = new BufferedReader(new InputStreamReader(errorResponse));
+
+				while ((sLine = errorBufReader.readLine()) != null){
+					stringBuilder_response.append(sLine);
+					stringBuilder_response.append(lineSeparator);
+				}
+				System.out.println("stringBuilder_response "+stringBuilder_response);
+				if(domainToolsRequest.getFormat().equals(DTConstants.JSON)){
+					JsonNode jsonNode = DTNodesService.getDomainToolsNode(stringBuilder_response.toString());
+					errorMessage = jsonNode.get("error").get("message").getTextValue();
+				}
+				switch(response_code){
+				case 400 : throw new BadRequestException(errorMessage);
+				case 401 :
+				case 403 : throw new NotAuthorizedException(errorMessage);
+				case 404 : throw new NotFoundException(errorMessage);
+				case 500 : throw new InternalServerException(errorMessage);
+				case 503 : throw new ServiceUnavailableException(errorMessage);
+				}
+			}
 			//Read the response
 			InputStream  response = httpConnection.getInputStream();
 			BufferedReader bufReader = new BufferedReader(new InputStreamReader(response));
-			String sLine;
 			while ((sLine = bufReader.readLine()) != null){
 				stringBuilder_response.append(sLine);
 				stringBuilder_response.append(lineSeparator);
 			}
-			if(domainToolsRequest.getformat().equals(DTConstants.XML))
+			if(domainToolsRequest.getFormat().equals(DTConstants.XML))
 				domainToolsResponse.setResponseXML(stringBuilder_response.toString());
-			else if(domainToolsRequest.getformat().equals(DTConstants.HTML))
+			else if(domainToolsRequest.getFormat().equals(DTConstants.HTML))
 				domainToolsResponse.setResponseHTML(stringBuilder_response.toString());
-			else if(domainToolsRequest.getformat().equals(DTConstants.OBJECT))
+			else if(domainToolsRequest.getFormat().equals(DTConstants.OBJECT))
 				domainToolsResponse.setResponseObject(DTNodesService.getDomainToolsNode(stringBuilder_response.toString()));
 			else domainToolsResponse.setResponseJSON(stringBuilder_response.toString());
 			//We set the response in the request to not reuse it later
 			domainToolsRequest.setDomainToolsResponse(domainToolsResponse);
 
-		} catch (ProtocolException e) {
+
+		}catch (ProtocolException e) {
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
+		}catch (IOException e) {
 			//May be thrown if the product doesn't exist
+			e.printStackTrace();
+		}catch (DomainToolsException e){
 			e.printStackTrace();
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -77,8 +116,7 @@ public class DTService {
 	private static void getLineSeparator() {
 		try{
 			lineSeparator = System.getProperty("line.separator");
-		}
-		catch (Exception e){
+		}catch (Exception e){
 			lineSeparator = "\n";
 		}
 	}

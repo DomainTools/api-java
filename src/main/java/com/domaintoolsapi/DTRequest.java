@@ -51,6 +51,7 @@ public class DTRequest {
 		this.parameters_map = new HashMap<String,String>();
 		this.domain = "";
 		this.format = "";
+		this.domainToolsResponse = null;
 	}
 
 	/**
@@ -63,7 +64,7 @@ public class DTRequest {
 		this.domain = domain;
 		return this;
 	}
-	
+
 	/**
 	 * Set if we use hashed message authentication or not.<br/>
 	 * Hashed message provides a straightforward but secure method of protecting your API key.
@@ -74,23 +75,36 @@ public class DTRequest {
 		this.domainTools.setsigned(signed);
 		return this;
 	}
-	
+
 	/**
 	 * Execute the request
 	 * @return DomainTools's response
 	 */
-	public DTResponse execute(){
-		//We check if we haven't already a response
-		if(format.equals(DTConstants.JSON) && domainToolsResponse.getResponseJSON().isEmpty()
-				|| format.equals(DTConstants.HTML) && domainToolsResponse.getResponseHTML().isEmpty()
-				|| format.equals(DTConstants.XML) && domainToolsResponse.getResponseXML().isEmpty()
-				|| format.equals(DTConstants.OBJECT) && domainToolsResponse.getResponseObject() == null
-				)
-			return DTService.execute(this);
-		//else we return it
-		else return getDomainToolsResponse();
+	private DTResponse execute(){
+		if(isAlreadyExecuted()){
+			return getDomainToolsResponse();
+		}
+		else	return DTService.execute(this);
 	}
-	
+
+	/**
+	 * Test if the request has been already executed 
+	 * @return true we have already the request's response
+	 */
+	private boolean isAlreadyExecuted(){
+		boolean res = false;
+		if(domainToolsResponse != null){
+			if(domainToolsResponse.equals(this)){
+				if(format.equals(DTConstants.JSON) && !domainToolsResponse.getResponseJSON().isEmpty()
+						|| format.equals(DTConstants.HTML) && !domainToolsResponse.getResponseHTML().isEmpty()
+						|| format.equals(DTConstants.XML) && !domainToolsResponse.getResponseXML().isEmpty()
+						|| format.equals(DTConstants.OBJECT) && domainToolsResponse.getResponseObject() != null)
+					res=true;
+			}
+		}
+		return res;
+	}
+
 	/**
 	 * Re-execute the request
 	 * @return the request's response
@@ -98,7 +112,7 @@ public class DTRequest {
 	public DTResponse refresh(){
 		return DTService.execute(this);
 	}
-	
+
 	/**
 	 * Add parameters to the request
 	 * @param options parameters/values
@@ -115,48 +129,10 @@ public class DTRequest {
 	 * @return this request
 	 */
 	public DTRequest where(String parameters) {
-		this.parameters = parameters;
+		//If the request has already a String parameter, we concat
+		if(!this.parameters.isEmpty()) this.parameters = this.parameters.concat("&"+parameters);
+		else this.parameters = parameters;
 		return this;
-	}
-
-	protected DomainTools getdomainTools() {
-		return domainTools;
-	}
-
-	protected void setdomainTools(DomainTools domainTools) {
-		this.domainTools = domainTools;
-	}
-
-	protected String getproduct() {
-		return product;
-	}
-
-	protected String getdomain() {
-		return domain;
-	}
-
-	protected String getformat() {
-		return format;
-	}
-
-	protected void setformat(String format) {
-		this.format = format;
-	}
-
-	protected String getparameters() {
-		return parameters;
-	}
-
-	protected Map<String, String> getparameters_map() {
-		return parameters_map;
-	}
-	
-	public void setDomainToolsResponse(DTResponse domainToolsResponse) {
-		this.domainToolsResponse = domainToolsResponse;
-	}
-
-	public DTResponse getDomainToolsResponse() {
-		return domainToolsResponse;
 	}
 
 	/**
@@ -164,8 +140,8 @@ public class DTRequest {
 	 * @return the XML's String
 	 */
 	public String toXML() {
-		setformat(DTConstants.XML);
-		return  DTService.execute(this).getResponseXML();
+		setFormat(DTConstants.XML);
+		return  execute().getResponseXML();
 	}
 
 	/**
@@ -173,19 +149,19 @@ public class DTRequest {
 	 * @return the JSON's String
 	 */
 	public String toJSON() {
-		setformat(DTConstants.JSON);
-		return  DTService.execute(this).getResponseJSON();
+		setFormat(DTConstants.JSON);
+		return  execute().getResponseJSON();
 	}
-	
+
 	/**
 	 * Return the request response in HTML format
 	 * @return the HTML's String
 	 */
 	public String toHTML() {
-		setformat(DTConstants.HTML);
-		return  DTService.execute(this).getResponseHTML();
+		setFormat(DTConstants.HTML);
+		return  execute().getResponseHTML();
 	}
-	
+
 	/**
 	 * Return the request's response in JsonNode format
 	 * As a general design rule, most accessors ("getters") are included in this base class,
@@ -193,7 +169,71 @@ public class DTRequest {
 	 * @return a JsonNode
 	 */
 	public JsonNode toObject() {
-		setformat(DTConstants.OBJECT);
-		return  DTService.execute(this).getResponseObject();
+		setFormat(DTConstants.OBJECT);
+		return  execute().getResponseObject();
+	}
+	
+	/**
+	 * Reset ALL parameters
+	 * @return this request
+	 */
+	public DTRequest resetParameters(){
+		this.parameters = "";
+		this.parameters_map = new HashMap<String,String>();
+		return this;
+	}
+	
+	/**
+	 * Reset ALL parameters, product, domain and format
+	 * @return this request
+	 */
+	public DTRequest clear(){
+		this.product = "";
+		this.domain = "";
+		this.format = "";
+		this.domainToolsResponse = null;
+		this.parameters = "";
+		this.parameters_map = new HashMap<String,String>();
+		return this;
+	}
+
+	protected DomainTools getDomainTools() {
+		return domainTools;
+	}
+
+	protected void setDomainTools(DomainTools domainTools) {
+		this.domainTools = domainTools;
+	}
+
+	protected String getProduct() {
+		return product;
+	}
+
+	protected String getDomain() {
+		return domain;
+	}
+
+	protected String getFormat() {
+		return format;
+	}
+
+	protected void setFormat(String format) {
+		this.format = format;
+	}
+
+	protected String getParameters() {
+		return parameters;
+	}
+
+	protected Map<String, String> getParameters_map() {
+		return parameters_map;
+	}
+
+	protected void setDomainToolsResponse(DTResponse domainToolsResponse) {
+		this.domainToolsResponse = domainToolsResponse;
+	}
+
+	protected DTResponse getDomainToolsResponse() {
+		return domainToolsResponse;
 	}
 }
