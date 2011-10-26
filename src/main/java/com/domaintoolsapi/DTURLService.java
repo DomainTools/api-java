@@ -47,8 +47,9 @@ public class DTURLService {
 		String uri;
 		if(domainToolsRequest.getProduct().isEmpty()) uri = domainToolsRequest.getDomain();
 		else{
-			if(domainToolsRequest.getProduct().equals("whois") || domainToolsRequest.getProduct().equals("hosting-history") ||
-					domainToolsRequest.getProduct().equals("reverse-ip") || domainToolsRequest.getProduct().equals("name-server-domains"))
+			if(domainToolsRequest.getProduct().equals("whois") || domainToolsRequest.getProduct().equals("whois/live") ||
+					domainToolsRequest.getProduct().equals("hosting-history") || domainToolsRequest.getProduct().equals("reverse-ip") ||
+					domainToolsRequest.getProduct().equals("name-server-domains"))
 				uri = domainToolsRequest.getDomain()+"/"+domainToolsRequest.getProduct();
 			else uri = domainToolsRequest.getProduct()+"/"+domainToolsRequest.getDomain();
 		}

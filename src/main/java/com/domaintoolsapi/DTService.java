@@ -12,12 +12,14 @@ import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.codehaus.jackson.JsonNode;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.domaintoolsapi.exceptions.BadRequestException;
 import com.domaintoolsapi.exceptions.DomainToolsException;
@@ -55,42 +57,15 @@ public class DTService {
 		DTResponse domainToolsResponse = new DTResponse(domainToolsRequest.getFormat(), domainToolsRequest.getDomain(), domainToolsRequest.getProduct(), domainToolsRequest.getParameters(), domainToolsRequest.getParameters_map());
 		StringBuilder sb_response = new StringBuilder();
 		String sLine;
-		String errorMessage = "error message";
+
 		try{
 			httpConnection = (HttpURLConnection) url.openConnection();
 			httpConnection.setRequestMethod("GET");
 			httpConnection.setDoOutput(true);
 			response_code = httpConnection.getResponseCode();
 
-			if(response_code >= 400 ){
-				//The request fail
-				//We try to get some informations
-				InputStream  errorResponse = httpConnection.getErrorStream();
-				BufferedReader errorBufReader = new BufferedReader(new InputStreamReader(errorResponse));
-
-				while ((sLine = errorBufReader.readLine()) != null){
-					sb_response.append(sLine);
-					sb_response.append(lineSeparator);
-				}
-
-				if(domainToolsRequest.getFormat().equals(DTConstants.JSON)){
-					JsonNode jsonNode = DTNodesService.getDomainToolsNode(sb_response.toString());
-					errorMessage = jsonNode.get("error").get("message").getTextValue();
-				}
-				else if(domainToolsRequest.getFormat().equals(DTConstants.XML)){
-					DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-					Document document = parser.parse(new InputSource(new StringReader(sb_response.toString())));
-					errorMessage = document.getElementsByTagName("message").item(0).getTextContent();
-				}
-				switch(response_code){
-				case 400 : throw new BadRequestException(errorMessage);
-				case 401 :
-				case 403 : throw new NotAuthorizedException(errorMessage);
-				case 404 : throw new NotFoundException(errorMessage);
-				case 500 : throw new InternalServerException(errorMessage);
-				case 503 : throw new ServiceUnavailableException(errorMessage);
-				}
-			}
+			if(response_code >= 400 ){ manageError(domainToolsRequest,response_code); }
+				
 			//Read the response
 			InputStream  response = httpConnection.getInputStream();
 			BufferedReader bufReader = new BufferedReader(new InputStreamReader(response));
@@ -123,6 +98,39 @@ public class DTService {
 			httpConnection.disconnect();
 		}
 		return domainToolsResponse;
+	}
+
+	private static void manageError(DTRequest domainToolsRequest, int response_code) throws DomainToolsException, IOException, ParserConfigurationException, SAXException {
+		String sLine;
+		StringBuilder sb_response = new StringBuilder();
+		String errorMessage = "error message";
+		//The request fail
+		//We try to get some informations
+		InputStream  errorResponse = httpConnection.getErrorStream();
+		BufferedReader errorBufReader = new BufferedReader(new InputStreamReader(errorResponse));
+
+		while ((sLine = errorBufReader.readLine()) != null){
+			sb_response.append(sLine);
+			sb_response.append(lineSeparator);
+		}
+
+		if(domainToolsRequest.getFormat().equals(DTConstants.JSON)){
+			JsonNode jsonNode = DTNodesService.getDomainToolsNode(sb_response.toString());
+			errorMessage = jsonNode.get("error").get("message").getTextValue();
+		}
+		else if(domainToolsRequest.getFormat().equals(DTConstants.XML)){
+			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document document = parser.parse(new InputSource(new StringReader(sb_response.toString())));
+			errorMessage = document.getElementsByTagName("message").item(0).getTextContent();
+		}
+		switch(response_code){
+		case 400 : throw new BadRequestException(errorMessage);
+		case 401 :
+		case 403 : throw new NotAuthorizedException(errorMessage);
+		case 404 : throw new NotFoundException(errorMessage);
+		case 500 : throw new InternalServerException(errorMessage);
+		case 503 : throw new ServiceUnavailableException(errorMessage);
+		}
 	}
 
 	private static void getLineSeparator() {
