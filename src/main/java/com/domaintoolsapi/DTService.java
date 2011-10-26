@@ -4,12 +4,20 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.codehaus.jackson.JsonNode;
+import org.jdom.Element;
+import org.jdom.input.SAXBuilder;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 import com.domaintoolsapi.exceptions.BadRequestException;
 import com.domaintoolsapi.exceptions.DomainToolsException;
@@ -45,9 +53,9 @@ public class DTService {
 	private static DTResponse doRequest(DTRequest domainToolsRequest){
 		int response_code = 0;
 		DTResponse domainToolsResponse = new DTResponse(domainToolsRequest.getFormat(), domainToolsRequest.getDomain(), domainToolsRequest.getProduct(), domainToolsRequest.getParameters(), domainToolsRequest.getParameters_map());
-		StringBuilder stringBuilder_response = new StringBuilder();
+		StringBuilder sb_response = new StringBuilder();
 		String sLine;
-		String errorMessage = "";
+		String errorMessage = "error message";
 		try{
 			httpConnection = (HttpURLConnection) url.openConnection();
 			httpConnection.setRequestMethod("GET");
@@ -61,13 +69,18 @@ public class DTService {
 				BufferedReader errorBufReader = new BufferedReader(new InputStreamReader(errorResponse));
 
 				while ((sLine = errorBufReader.readLine()) != null){
-					stringBuilder_response.append(sLine);
-					stringBuilder_response.append(lineSeparator);
+					sb_response.append(sLine);
+					sb_response.append(lineSeparator);
 				}
-				System.out.println("stringBuilder_response "+stringBuilder_response);
+
 				if(domainToolsRequest.getFormat().equals(DTConstants.JSON)){
-					JsonNode jsonNode = DTNodesService.getDomainToolsNode(stringBuilder_response.toString());
+					JsonNode jsonNode = DTNodesService.getDomainToolsNode(sb_response.toString());
 					errorMessage = jsonNode.get("error").get("message").getTextValue();
+				}
+				else if(domainToolsRequest.getFormat().equals(DTConstants.XML)){
+					DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+					Document document = parser.parse(new InputSource(new StringReader(sb_response.toString())));
+					errorMessage = document.getElementsByTagName("message").item(0).getTextContent();
 				}
 				switch(response_code){
 				case 400 : throw new BadRequestException(errorMessage);
@@ -82,19 +95,18 @@ public class DTService {
 			InputStream  response = httpConnection.getInputStream();
 			BufferedReader bufReader = new BufferedReader(new InputStreamReader(response));
 			while ((sLine = bufReader.readLine()) != null){
-				stringBuilder_response.append(sLine);
-				stringBuilder_response.append(lineSeparator);
+				sb_response.append(sLine);
+				sb_response.append(lineSeparator);
 			}
 			if(domainToolsRequest.getFormat().equals(DTConstants.XML))
-				domainToolsResponse.setResponseXML(stringBuilder_response.toString());
+				domainToolsResponse.setResponseXML(sb_response.toString());
 			else if(domainToolsRequest.getFormat().equals(DTConstants.HTML))
-				domainToolsResponse.setResponseHTML(stringBuilder_response.toString());
+				domainToolsResponse.setResponseHTML(sb_response.toString());
 			else if(domainToolsRequest.getFormat().equals(DTConstants.OBJECT))
-				domainToolsResponse.setResponseObject(DTNodesService.getDomainToolsNode(stringBuilder_response.toString()));
-			else domainToolsResponse.setResponseJSON(stringBuilder_response.toString());
+				domainToolsResponse.setResponseObject(DTNodesService.getDomainToolsNode(sb_response.toString()));
+			else domainToolsResponse.setResponseJSON(sb_response.toString());
 			//We set the response in the request to not reuse it later
 			domainToolsRequest.setDomainToolsResponse(domainToolsResponse);
-
 
 		}catch (ProtocolException e) {
 			e.printStackTrace();
