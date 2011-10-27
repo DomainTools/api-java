@@ -6,6 +6,7 @@ import java.util.Map;
 import org.codehaus.jackson.JsonNode;
 
 import com.domaintoolsapi.DTConstants;
+import com.domaintoolsapi.exceptions.DomainToolsException;
 
 /**
  * Contains all DT request's data
@@ -81,7 +82,7 @@ public class DTRequest {
 	 * @return DomainTools's response
 	 * @throws Exception 
 	 */
-	private DTResponse execute() throws Exception{
+	private DTResponse execute() throws DomainToolsException{
 		if(isAlreadyExecuted()){
 			return getDomainToolsResponse();
 		}
@@ -142,7 +143,7 @@ public class DTRequest {
 	 * @return the XML's String
 	 * @throws Exception 
 	 */
-	public String toXML() throws Exception {
+	public String toXML() throws DomainToolsException {
 		setFormat(DTConstants.XML);
 		return  execute().getResponseXML();
 	}
@@ -152,7 +153,7 @@ public class DTRequest {
 	 * @return the JSON's String
 	 * @throws Exception 
 	 */
-	public String toJSON() throws Exception{
+	public String toJSON() throws DomainToolsException{
 		setFormat(DTConstants.JSON);
 		return  execute().getResponseJSON();
 	}
@@ -162,7 +163,7 @@ public class DTRequest {
 	 * @return the HTML's String
 	 * @throws Exception 
 	 */
-	public String toHTML() throws Exception {
+	public String toHTML() throws DomainToolsException {
 		setFormat(DTConstants.HTML);
 		return  execute().getResponseHTML();
 	}
@@ -174,7 +175,7 @@ public class DTRequest {
 	 * @return a JsonNode
 	 * @throws Exception 
 	 */
-	public JsonNode toObject() throws Exception {
+	public JsonNode toObject() throws DomainToolsException {
 		setFormat(DTConstants.OBJECT);
 		return  execute().getResponseObject();
 	}

@@ -1,23 +1,16 @@
-import org.junit.Test;
-
 import com.domaintoolsapi.DomainTools;
-import com.domaintoolsapi.exceptions.BadRequestException;
+import com.domaintoolsapi.exceptions.DomainToolsException;
 
 import junit.framework.TestCase;
 
 
 public class UnknownProductTest extends TestCase {
 
-	@Test(expected=BadRequestException.class)
 	public void testUnknownProduct(){
-		try{
 		DomainTools domainTools = new DomainTools("username", "key");
-		domainTools.use("unknown product").on("domaintools.com").toJSON();
-		fail("Un exception était attendue!");
-		}catch(BadRequestException e){
-			
-		} catch (Exception e) {
-
-		}
+			try {
+				domainTools.use("unknown product").on("domaintools.com").toJSON();
+				fail(); //unreachable because an exception should be launch
+			} catch (DomainToolsException e) {}
 	}
 }

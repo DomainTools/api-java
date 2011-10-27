@@ -42,7 +42,7 @@ public class DTService {
 	private static String lineSeparator ;
 	private static URL url;
 
-	protected static DTResponse execute(DTRequest domainToolsRequest) throws Exception{
+	protected static DTResponse execute(DTRequest domainToolsRequest) throws DomainToolsException{
 		//If no format specified, set Json
 		if(domainToolsRequest.getFormat().isEmpty()) domainToolsRequest.setFormat(DTConstants.JSON);
 		getLineSeparator();		
@@ -50,7 +50,7 @@ public class DTService {
 		return doRequest(domainToolsRequest);
 	}
 
-	private static DTResponse doRequest(DTRequest domainToolsRequest) throws Exception{
+	private static DTResponse doRequest(DTRequest domainToolsRequest) throws DomainToolsException{
 		int response_code = 0;
 		DTResponse domainToolsResponse = new DTResponse(domainToolsRequest.getFormat(), domainToolsRequest.getDomain(), domainToolsRequest.getProduct(), domainToolsRequest.getParameters(), domainToolsRequest.getParameters_map());
 		StringBuilder sb_response = new StringBuilder();
@@ -93,7 +93,7 @@ public class DTService {
 		return domainToolsResponse;
 	}
 
-	private static void manageError(DTRequest domainToolsRequest, int response_code) throws DomainToolsException, IOException, ParserConfigurationException, SAXException {
+	private static void manageError(DTRequest domainToolsRequest, int response_code) throws DomainToolsException{
 		String sLine;
 		StringBuilder sb_response = new StringBuilder();
 		String errorMessage = "error message";
@@ -102,9 +102,13 @@ public class DTService {
 		InputStream  errorResponse = httpConnection.getErrorStream();
 		BufferedReader errorBufReader = new BufferedReader(new InputStreamReader(errorResponse));
 
-		while ((sLine = errorBufReader.readLine()) != null){
-			sb_response.append(sLine);
-			sb_response.append(lineSeparator);
+		try {
+			while ((sLine = errorBufReader.readLine()) != null){
+				sb_response.append(sLine);
+				sb_response.append(lineSeparator);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		if(domainToolsRequest.getFormat().equals(DTConstants.JSON)){
@@ -112,9 +116,18 @@ public class DTService {
 			errorMessage = jsonNode.get("error").get("message").getTextValue();
 		}
 		else if(domainToolsRequest.getFormat().equals(DTConstants.XML)){
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			System.out.println(sb_response.toString());
-			Document document = parser.parse(new InputSource(new StringReader(sb_response.toString())));
+			DocumentBuilder parser = null;
+			Document document = null;
+			try {
+				parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				document = parser.parse(new InputSource(new StringReader(sb_response.toString())));
+			} catch (SAXException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+			}
 			errorMessage = document.getElementsByTagName("message").item(0).getTextContent();
 		}
 		switch(response_code){
