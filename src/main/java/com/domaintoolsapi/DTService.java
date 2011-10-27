@@ -42,7 +42,7 @@ public class DTService {
 	private static String lineSeparator ;
 	private static URL url;
 
-	protected static DTResponse execute(DTRequest domainToolsRequest){
+	protected static DTResponse execute(DTRequest domainToolsRequest) throws Exception{
 		//If no format specified, set Json
 		if(domainToolsRequest.getFormat().isEmpty()) domainToolsRequest.setFormat(DTConstants.JSON);
 		getLineSeparator();		
@@ -50,7 +50,7 @@ public class DTService {
 		return doRequest(domainToolsRequest);
 	}
 
-	private static DTResponse doRequest(DTRequest domainToolsRequest){
+	private static DTResponse doRequest(DTRequest domainToolsRequest) throws Exception{
 		int response_code = 0;
 		DTResponse domainToolsResponse = new DTResponse(domainToolsRequest.getFormat(), domainToolsRequest.getDomain(), domainToolsRequest.getProduct(), domainToolsRequest.getParameters(), domainToolsRequest.getParameters_map());
 		StringBuilder sb_response = new StringBuilder();
@@ -86,11 +86,6 @@ public class DTService {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}catch (IOException e) {
-			//May be thrown if the product doesn't exist
-			e.printStackTrace();
-		}catch (DomainToolsException e){
-			e.printStackTrace();
-		}catch (Exception e) {
 			e.printStackTrace();
 		}finally{
 			httpConnection.disconnect();
@@ -118,6 +113,7 @@ public class DTService {
 		}
 		else if(domainToolsRequest.getFormat().equals(DTConstants.XML)){
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			System.out.println(sb_response.toString());
 			Document document = parser.parse(new InputSource(new StringReader(sb_response.toString())));
 			errorMessage = document.getElementsByTagName("message").item(0).getTextContent();
 		}

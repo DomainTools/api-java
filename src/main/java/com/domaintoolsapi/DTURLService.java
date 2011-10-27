@@ -51,7 +51,7 @@ public class DTURLService {
 					domainToolsRequest.getProduct().equals("hosting-history") || domainToolsRequest.getProduct().equals("reverse-ip") ||
 					domainToolsRequest.getProduct().equals("name-server-domains"))
 				uri = domainToolsRequest.getDomain()+"/"+domainToolsRequest.getProduct();
-			else uri = domainToolsRequest.getProduct()+"/"+domainToolsRequest.getDomain();
+			else uri = domainToolsRequest.getProduct()+"/";
 		}
 		return uri;
 	}

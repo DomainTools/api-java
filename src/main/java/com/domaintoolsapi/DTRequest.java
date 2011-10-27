@@ -79,8 +79,9 @@ public class DTRequest {
 	/**
 	 * Execute the request
 	 * @return DomainTools's response
+	 * @throws Exception 
 	 */
-	private DTResponse execute(){
+	private DTResponse execute() throws Exception{
 		if(isAlreadyExecuted()){
 			return getDomainToolsResponse();
 		}
@@ -108,8 +109,9 @@ public class DTRequest {
 	/**
 	 * Re-execute the request
 	 * @return the request's response
+	 * @throws Exception 
 	 */
-	public DTResponse refresh(){
+	public DTResponse refresh() throws Exception{
 		return DTService.execute(this);
 	}
 
@@ -138,8 +140,9 @@ public class DTRequest {
 	/**
 	 * Return the request response in XML format
 	 * @return the XML's String
+	 * @throws Exception 
 	 */
-	public String toXML() {
+	public String toXML() throws Exception {
 		setFormat(DTConstants.XML);
 		return  execute().getResponseXML();
 	}
@@ -147,8 +150,9 @@ public class DTRequest {
 	/**
 	 * Return the request response in JSON format
 	 * @return the JSON's String
+	 * @throws Exception 
 	 */
-	public String toJSON() {
+	public String toJSON() throws Exception{
 		setFormat(DTConstants.JSON);
 		return  execute().getResponseJSON();
 	}
@@ -156,8 +160,9 @@ public class DTRequest {
 	/**
 	 * Return the request response in HTML format
 	 * @return the HTML's String
+	 * @throws Exception 
 	 */
-	public String toHTML() {
+	public String toHTML() throws Exception {
 		setFormat(DTConstants.HTML);
 		return  execute().getResponseHTML();
 	}
@@ -167,8 +172,9 @@ public class DTRequest {
 	 * As a general design rule, most accessors ("getters") are included in this base class,
 	 * to allow for traversing structure without type casts
 	 * @return a JsonNode
+	 * @throws Exception 
 	 */
-	public JsonNode toObject() {
+	public JsonNode toObject() throws Exception {
 		setFormat(DTConstants.OBJECT);
 		return  execute().getResponseObject();
 	}
