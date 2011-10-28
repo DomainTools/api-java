@@ -1,3 +1,4 @@
+package test;
 import com.domaintoolsapi.DomainTools;
 import com.domaintoolsapi.exceptions.DomainToolsException;
 

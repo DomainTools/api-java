@@ -121,7 +121,7 @@ public class DTRequest {
 	 * @param options parameters/values
 	 * @return this request
 	 */
-	public DTRequest where(HashMap<String, String> parameters) {
+	public DTRequest where(Map<String, String> parameters) {
 		this.parameters_map = parameters;
 		return this;
 	}

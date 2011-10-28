@@ -1,3 +1,4 @@
+package test;
 import java.io.IOException;
 
 import org.codehaus.jackson.JsonNode;

@@ -1,3 +1,4 @@
+package test;
 import java.io.IOException;
 import java.io.StringReader;
 
@@ -10,7 +11,7 @@ import junit.framework.TestCase;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.domaintoolsapi.DomainTools;
+import com.domaintoolsapi.*;
 import com.domaintoolsapi.exceptions.DomainToolsException;
 
 
