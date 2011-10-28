@@ -22,14 +22,15 @@ public class DTURLService {
 	 */	
 	public static URL buildURL(DTRequest domainToolsRequest){
 		String uri = getURI(domainToolsRequest);
-		string_url = DTConstants.SCHEME+DTConstants.HOST+DTConstants.PATH+"/"+uri;
+		uri = DTConstants.PATH+"/"+uri;
+		string_url = DTConstants.SCHEME+DTConstants.HOST+uri;		
 		//If the user want to use the signed authentication
 		if(domainToolsRequest.getDomainTools().issigned()) addSignature(domainToolsRequest, uri);
 		else addUserNameAndKey(domainToolsRequest);
 		addParameters(domainToolsRequest);
 		addResponseFormat(domainToolsRequest);
 		try {
-			System.out.println(string_url);
+			System.out.println("URL "+string_url);
 			url = new URL(string_url);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -50,10 +51,9 @@ public class DTURLService {
 			if(domainToolsRequest.getProduct().equals("whois") || domainToolsRequest.getProduct().equals("whois/live") || domainToolsRequest.getProduct().equals("whois/history") ||
 					domainToolsRequest.getProduct().equals("hosting-history") || domainToolsRequest.getProduct().equals("reverse-ip") ||
 					domainToolsRequest.getProduct().equals("name-server-domains"))
-				uri = domainToolsRequest.getDomain()+"/"+domainToolsRequest.getProduct()+"/";
-			else uri = domainToolsRequest.getProduct()+"/";
+				uri = domainToolsRequest.getDomain()+"/"+domainToolsRequest.getProduct();
+			else uri = domainToolsRequest.getProduct();
 		}
-		System.out.println("uri "+uri);
 		return uri;
 	}
 

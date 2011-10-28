@@ -4,22 +4,14 @@ import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.SchemaFactory;
 
-import org.w3c.dom.Document;
-import org.xml.sax.ErrorHandler;
+import junit.framework.TestCase;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 import com.domaintoolsapi.DomainTools;
 import com.domaintoolsapi.exceptions.DomainToolsException;
-
-import junit.framework.TestCase;
 
 
 public class ResponseXMLTest extends TestCase {

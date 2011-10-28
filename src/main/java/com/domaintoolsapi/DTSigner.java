@@ -17,8 +17,8 @@ public class DTSigner {
   protected DTSigner(String api_username, String api_key) {
     this.api_username = api_username;
     this.api_key = api_key;
-    this.timeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-//    this.timeFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+    this.timeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    this.timeFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
   }
 
   protected String timestamp() {
@@ -36,6 +36,8 @@ public class DTSigner {
 
   protected String sign(String timestamp, String uri)
     throws java.security.SignatureException {
+	  System.out.println("timestamp "+timestamp);
+	  System.out.println("uri "+uri);
     String Result;
     try {
 	    String data = new String(this.api_username + timestamp + uri);
