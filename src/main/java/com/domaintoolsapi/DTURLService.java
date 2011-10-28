@@ -29,6 +29,7 @@ public class DTURLService {
 		addParameters(domainToolsRequest);
 		addResponseFormat(domainToolsRequest);
 		try {
+			System.out.println(string_url);
 			url = new URL(string_url);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -49,9 +50,10 @@ public class DTURLService {
 			if(domainToolsRequest.getProduct().equals("whois") || domainToolsRequest.getProduct().equals("whois/live") || domainToolsRequest.getProduct().equals("whois/history") ||
 					domainToolsRequest.getProduct().equals("hosting-history") || domainToolsRequest.getProduct().equals("reverse-ip") ||
 					domainToolsRequest.getProduct().equals("name-server-domains"))
-				uri = domainToolsRequest.getDomain()+"/"+domainToolsRequest.getProduct();
+				uri = domainToolsRequest.getDomain()+"/"+domainToolsRequest.getProduct()+"/";
 			else uri = domainToolsRequest.getProduct()+"/";
 		}
+		System.out.println("uri "+uri);
 		return uri;
 	}
 
@@ -100,7 +102,7 @@ public class DTURLService {
 			String timestamp = signer.timestamp();
 			String signature = signer.sign(timestamp, uri);
 			string_url = string_url.concat("?api_username="+domainToolsRequest.getDomainTools().getapi_username()+
-					"&signature="+signature+"&timestamp="+timestamp);
+					"&timestamp="+timestamp+"&signature="+signature);
 		} catch(Exception e) {
 			System.out.println("Error trying to sign query");
 		}

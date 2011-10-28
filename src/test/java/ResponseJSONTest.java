@@ -1,20 +1,12 @@
 import java.io.IOException;
-import java.io.StringReader;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import junit.framework.TestCase;
 
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import com.domaintoolsapi.DomainTools;
 import com.domaintoolsapi.exceptions.DomainToolsException;
-
-import junit.framework.TestCase;
 
 
 public class ResponseJSONTest extends TestCase {
@@ -25,11 +17,10 @@ public class ResponseJSONTest extends TestCase {
 	public void testResponseJSON(){
 		DomainTools domainTools = new DomainTools("username", "key");
 		ObjectMapper m = new ObjectMapper();
-		JsonNode rootNode = null;
 		String json = "";
 		try {
 			json = domainTools.use("whois").on("domaintools.com").toJSON();
-			rootNode = (JsonNode) m.readTree(json);
+			m.readTree(json);
 		} catch (JsonProcessingException e) {
 			fail();
 		} catch (IOException e) {

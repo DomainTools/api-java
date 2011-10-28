@@ -4,6 +4,8 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class DTSigner {
   private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
@@ -16,6 +18,7 @@ public class DTSigner {
     this.api_username = api_username;
     this.api_key = api_key;
     this.timeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+//    this.timeFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
   }
 
   protected String timestamp() {
