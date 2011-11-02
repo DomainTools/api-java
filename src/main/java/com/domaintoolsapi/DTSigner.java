@@ -9,13 +9,13 @@ import java.util.TimeZone;
 public class DTSigner {
   private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 
-  private String api_username;
-  private String api_key;
+  private final String apiUsername;
+  private final String apiKey;
   private SimpleDateFormat timeFormatter;
 
   protected DTSigner(String api_username, String api_key) {
-    this.api_username = api_username;
-    this.api_key = api_key;
+    this.apiUsername = api_username;
+    this.apiKey = api_key;
     this.timeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     this.timeFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
   }
@@ -37,8 +37,8 @@ public class DTSigner {
     throws java.security.SignatureException {
     String Result;
     try {
-	    String data = new String(this.api_username + timestamp + uri);
-	    SecretKeySpec signingKey = new SecretKeySpec(this.api_key.getBytes(),
+	    String data = new String(this.apiUsername + timestamp + uri);
+	    SecretKeySpec signingKey = new SecretKeySpec(this.apiKey.getBytes(),
 			HMAC_SHA1_ALGORITHM);
 	    Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
 	    mac.init(signingKey);

@@ -7,4 +7,9 @@ public class InternalServerException extends DomainToolsException {
 	public InternalServerException(String message){
 		super(message);
 	}
+
+	@Override
+	public int getCode() {
+		return 500;
+	}
 }

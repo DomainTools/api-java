@@ -11,7 +11,7 @@ import java.util.Set;
  */
 public class DTURLService {
 
-	private static String string_url;
+	private static String stringUrl;
 	private static URL url;
 
 	/**
@@ -23,14 +23,14 @@ public class DTURLService {
 	public static URL buildURL(DTRequest domainToolsRequest){
 		String uri = getURI(domainToolsRequest);
 		uri = DTConstants.PATH+"/"+uri;
-		string_url = DTConstants.SCHEME+DTConstants.HOST+uri;		
+		stringUrl = DTConstants.SCHEME+DTConstants.HOST+uri;		
 		//If the user want to use the signed authentication
 		if(domainToolsRequest.getDomainTools().issigned()) addSignature(domainToolsRequest, uri);
 		else addUserNameAndKey(domainToolsRequest);
 		addParameters(domainToolsRequest);
 		addResponseFormat(domainToolsRequest);
 		try {
-			url = new URL(string_url);
+			url = new URL(stringUrl);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -63,16 +63,16 @@ public class DTURLService {
 	private static void addParameters(DTRequest domainToolsRequest){
 		//String parameters
 		if(!domainToolsRequest.getParameters().isEmpty())
-			string_url = string_url.concat("&"+domainToolsRequest.getParameters());
+			stringUrl = stringUrl.concat("&"+domainToolsRequest.getParameters());
 		//Map parameters
-		if(domainToolsRequest.getParameters_map().size() > 0){
+		if(domainToolsRequest.getParametersMap().size() > 0){
 			//If parameters is already in the url
-			Set<String> keys = domainToolsRequest.getParameters_map().keySet();
+			Set<String> keys = domainToolsRequest.getParametersMap().keySet();
 			Iterator<String> it = keys.iterator();
 			while(it.hasNext()){
 				String key = it.next();
-				String value = (String) domainToolsRequest.getParameters_map().get(key);
-				string_url = string_url.concat("&"+key+"="+value);
+				String value = (String) domainToolsRequest.getParametersMap().get(key);
+				stringUrl = stringUrl.concat("&"+key+"="+value);
 			}
 		}
 	}
@@ -83,7 +83,7 @@ public class DTURLService {
 	 * @param domainToolsRequest
 	 */
 	private static void addUserNameAndKey(DTRequest domainToolsRequest) {
-		string_url = string_url.concat("?api_username="+domainToolsRequest.getDomainTools().getapi_username()+"&api_key="+domainToolsRequest.getDomainTools().getapi_key());
+		stringUrl = stringUrl.concat("?api_username="+domainToolsRequest.getDomainTools().getApiUsername()+"&api_key="+domainToolsRequest.getDomainTools().getApiKey());
 	}
 
 	/**
@@ -93,14 +93,14 @@ public class DTURLService {
 	 */
 	private static void addSignature(DTRequest domainToolsRequest, String uri){
 		try {
-			DTSigner signer = new DTSigner(domainToolsRequest.getDomainTools().getapi_username(), 
-					domainToolsRequest.getDomainTools().getapi_key());
+			DTSigner signer = new DTSigner(domainToolsRequest.getDomainTools().getApiUsername(), 
+					domainToolsRequest.getDomainTools().getApiKey());
 			String timestamp = signer.timestamp();
 			String signature = signer.sign(timestamp, uri);
-			string_url = string_url.concat("?api_username="+domainToolsRequest.getDomainTools().getapi_username()+
+			stringUrl = stringUrl.concat("?api_username="+domainToolsRequest.getDomainTools().getApiUsername()+
 					"&timestamp="+timestamp+"&signature="+signature);
 		} catch(Exception e) {
-			System.out.println("Error trying to sign query");
+			e.printStackTrace();
 		}
 	}
 
@@ -110,8 +110,8 @@ public class DTURLService {
 	 */
 	private static void addResponseFormat(DTRequest domainToolsRequest){
 		if(domainToolsRequest.getFormat().equals(DTConstants.XML)) 
-			string_url=string_url.concat("&"+DTConstants.FORMAT_XML);
+			stringUrl=stringUrl.concat("&"+DTConstants.FORMAT_XML);
 		else if(domainToolsRequest.getFormat().equals(DTConstants.HTML)) 
-			string_url=string_url.concat("&"+DTConstants.FORMAT_HTML);
+			stringUrl=stringUrl.concat("&"+DTConstants.FORMAT_HTML);
 	}
 }

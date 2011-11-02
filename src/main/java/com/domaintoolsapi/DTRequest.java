@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 
-import com.domaintoolsapi.DTConstants;
 import com.domaintoolsapi.exceptions.DomainToolsException;
 
 /**
@@ -38,7 +37,7 @@ public class DTRequest {
 	 * Parameters
 	 */
 	private String parameters;
-	private Map<String, String> parameters_map;
+	private Map<String, String> parametersMap;
 
 	/**
 	 * Create a new request
@@ -49,10 +48,9 @@ public class DTRequest {
 		this.domainTools = domainTools;
 		this.product = product;
 		this.parameters = "";
-		this.parameters_map = new HashMap<String,String>();
+		this.parametersMap = new HashMap<String,String>();
 		this.domain = "";
 		this.format = "";
-		this.domainToolsResponse = null;
 	}
 
 	/**
@@ -86,7 +84,9 @@ public class DTRequest {
 		if(isAlreadyExecuted()){
 			return getDomainToolsResponse();
 		}
-		else	return DTService.execute(this);
+		else{
+			return DTService.execute(this);
+		}
 	}
 
 	/**
@@ -96,12 +96,12 @@ public class DTRequest {
 	private boolean isAlreadyExecuted(){
 		boolean res = false;
 		if(domainToolsResponse != null){
-			if(domainToolsResponse.equals(this)){
-				if(format.equals(DTConstants.JSON) && !domainToolsResponse.getResponseJSON().isEmpty()
-						|| format.equals(DTConstants.HTML) && !domainToolsResponse.getResponseHTML().isEmpty()
-						|| format.equals(DTConstants.XML) && !domainToolsResponse.getResponseXML().isEmpty()
-						|| format.equals(DTConstants.OBJECT) && domainToolsResponse.getResponseObject() != null)
-					res=true;
+			if(domainToolsResponse.equals(this) 
+					&&(format.equals(DTConstants.JSON) && !domainToolsResponse.getResponseJSON().isEmpty()
+							|| format.equals(DTConstants.HTML) && !domainToolsResponse.getResponseHTML().isEmpty()
+							|| format.equals(DTConstants.XML) && !domainToolsResponse.getResponseXML().isEmpty()
+							|| format.equals(DTConstants.OBJECT) && domainToolsResponse.getResponseObject() != null)){
+				res=true;
 			}
 		}
 		return res;
@@ -122,7 +122,7 @@ public class DTRequest {
 	 * @return this request
 	 */
 	public DTRequest where(Map<String, String> parameters) {
-		this.parameters_map = parameters;
+		this.parametersMap = parameters;
 		return this;
 	}
 
@@ -133,8 +133,12 @@ public class DTRequest {
 	 */
 	public DTRequest where(String parameters) {
 		//If the request has already a String parameter, we concat
-		if(!this.parameters.isEmpty()) this.parameters = this.parameters.concat("&"+parameters);
-		else this.parameters = parameters;
+		if(this.parameters.isEmpty()){
+			this.parameters = parameters;
+		}
+		else{
+			this.parameters = this.parameters.concat("&"+parameters);
+		}
 		return this;
 	}
 
@@ -179,17 +183,17 @@ public class DTRequest {
 		setFormat(DTConstants.OBJECT);
 		return  execute().getResponseObject();
 	}
-	
+
 	/**
 	 * Reset ALL parameters
 	 * @return this request
 	 */
 	public DTRequest resetParameters(){
 		this.parameters = "";
-		this.parameters_map = new HashMap<String,String>();
+		this.parametersMap = new HashMap<String,String>();
 		return this;
 	}
-	
+
 	/**
 	 * Reset ALL parameters, product, domain and format
 	 * @return this request
@@ -200,7 +204,7 @@ public class DTRequest {
 		this.format = "";
 		this.domainToolsResponse = null;
 		this.parameters = "";
-		this.parameters_map = new HashMap<String,String>();
+		this.parametersMap = new HashMap<String,String>();
 		return this;
 	}
 
@@ -232,8 +236,8 @@ public class DTRequest {
 		return parameters;
 	}
 
-	protected Map<String, String> getParameters_map() {
-		return parameters_map;
+	protected Map<String, String> getParametersMap() {
+		return parametersMap;
 	}
 
 	protected void setDomainToolsResponse(DTResponse domainToolsResponse) {

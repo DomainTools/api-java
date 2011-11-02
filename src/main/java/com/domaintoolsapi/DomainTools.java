@@ -9,9 +9,9 @@ package com.domaintoolsapi;
  */
 public class DomainTools {
 
-	private String apiUsername;
-	private String apiKey;
-	private boolean signed;
+	private final transient String apiUsername;
+	private final transient String apiKey;
+	private transient boolean signed;
 
 	/**
 	 * Construct a DomainTools API Object
@@ -88,15 +88,14 @@ public class DomainTools {
 	 * @return a DomainToolsRequest
 	 */
 	public DTRequest use(String product){
-		DTRequest domainToolsRequest = new DTRequest(this,product);
-		return domainToolsRequest;
+		return new DTRequest(this,product);
 	}
 
-	protected String getapi_username() {
+	protected String getApiUsername() {
 		return apiUsername;
 	}
 
-	public String getapi_key() {
+	public String getApiKey() {
 		return apiKey;
 	}
 

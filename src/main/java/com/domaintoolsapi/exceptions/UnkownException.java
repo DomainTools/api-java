@@ -1,15 +1,15 @@
 package com.domaintoolsapi.exceptions;
 
-public class ServiceUnavailableException extends DomainToolsException {
+public class UnkownException extends DomainToolsException {
 
 	private static final long serialVersionUID = 1L;
 
-	public ServiceUnavailableException(String message){
+	public UnkownException(String message){
 		super(message);
 	}
 
 	@Override
 	public int getCode() {
-		return 503;
+		return 0;
 	}
 }

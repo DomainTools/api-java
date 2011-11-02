@@ -9,10 +9,10 @@ import org.codehaus.jackson.map.ObjectMapper;
 public class DTNodesService {
 
 	protected static JsonNode getDomainToolsNode(String responseJSON){
-		ObjectMapper m = new ObjectMapper();
+		ObjectMapper objectMapper = new ObjectMapper();
 		JsonNode rootNode = null;
 		try {
-			rootNode = (JsonNode) m.readTree(responseJSON);
+			rootNode = (JsonNode) objectMapper.readTree(responseJSON);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

@@ -7,4 +7,9 @@ public class NotAuthorizedException extends DomainToolsException {
 	public NotAuthorizedException(String message){
 		super(message);
 	}
+
+	@Override
+	public int getCode() {
+		return 401;
+	}
 }

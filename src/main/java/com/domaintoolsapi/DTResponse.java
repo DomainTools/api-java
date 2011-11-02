@@ -12,11 +12,11 @@ import org.codehaus.jackson.JsonNode;
 
 public class DTResponse {
 	
-	private String format;
-	private String domain;
-	private String product;
-	private String parameters;
-	private Map<String, String> parameters_map;
+	private final String format;
+	private final String domain;
+	private final String product;
+	private final String parameters;
+	private final Map<String, String> parametersMap;
 	
 	private String responseJSON;
 	private String responseHTML;
@@ -28,7 +28,7 @@ public class DTResponse {
 		this.domain = domain;
 		this.product = product;
 		this.parameters = parameters;
-		this.parameters_map = parameters_map;
+		this.parametersMap = parameters_map;
 		this.responseJSON = "";
 		this.responseHTML = "";
 		this.responseXML = "";
@@ -99,20 +99,7 @@ public class DTResponse {
 	/**
 	 * @return the parameters_map
 	 */
-	public Map<String, String> getParameters_map() {
-		return parameters_map;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean equals(DTRequest dtRequest) {
-		boolean res = true;
-		if(!this.getDomain().equals(dtRequest.getDomain())) res = false;
-		if(!this.getFormat().equals(dtRequest.getFormat())) res = false;
-		if(!this.getParameters().equals(dtRequest.getParameters())) res = false;
-		if(!this.getParameters_map().equals(dtRequest.getParameters_map())) res = false;
-		return res;
+	public Map<String, String> getParametersMap() {
+		return parametersMap;
 	}	
 }

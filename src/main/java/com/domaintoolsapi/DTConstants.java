@@ -19,4 +19,6 @@ public class DTConstants {
 	protected final static String FORMAT_JSON = "format=json";
 	protected final static String FORMAT_XML = "format=xml";
 	protected final static String FORMAT_HTML = "format=html";
+	
+	public DTConstants(){}
 }
