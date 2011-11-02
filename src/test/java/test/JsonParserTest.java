@@ -17,8 +17,10 @@ public class JsonParserTest extends TestCase {
 			try {
 				rootNode = (JsonNode) m.readTree(s);
 			} catch (JsonProcessingException e) {
+				fail();
 				e.printStackTrace();
 			} catch (IOException e) {
+				fail();
 				e.printStackTrace();
 			}
 			assertEquals("value", rootNode.get("a").get("b").getTextValue().toString());

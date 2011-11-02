@@ -22,7 +22,7 @@ public class Main {
 			HashMap<String, String> params = new HashMap<String, String>();
 			params.put("query", "domain%20tools");
 			// Example : we request an xml response when using the domain-search service on domaintools with signed method
-			String s = domainTools.use("domain-search").on("domaintools.com").where(params).toXML();
+			String s = domainTools.use("domain-search").on("domaintools.com").where(params).where("max_length=2").toXML();
 			System.out.println(s);
 		} catch (Exception e) {
 			e.printStackTrace();
