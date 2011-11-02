@@ -30,7 +30,6 @@ public class DTURLService {
 		addParameters(domainToolsRequest);
 		addResponseFormat(domainToolsRequest);
 		try {
-			System.out.println(string_url);
 			url = new URL(string_url);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
