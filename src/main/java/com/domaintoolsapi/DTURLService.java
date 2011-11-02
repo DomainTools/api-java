@@ -30,6 +30,7 @@ public class DTURLService {
 		addParameters(domainToolsRequest);
 		addResponseFormat(domainToolsRequest);
 		try {
+			System.out.println(string_url);
 			url = new URL(string_url);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -61,7 +62,6 @@ public class DTURLService {
 	 * @param domainToolsRequest
 	 */
 	private static void addParameters(DTRequest domainToolsRequest){
-		boolean isFirstParameter = true;
 		//String parameters
 		if(!domainToolsRequest.getParameters().isEmpty())
 			string_url = string_url.concat("&"+domainToolsRequest.getParameters());
@@ -71,11 +71,9 @@ public class DTURLService {
 			Set<String> keys = domainToolsRequest.getParameters_map().keySet();
 			Iterator<String> it = keys.iterator();
 			while(it.hasNext()){
-				if(!isFirstParameter) string_url = string_url.concat("&");
-				isFirstParameter = false;
 				String key = it.next();
 				String value = (String) domainToolsRequest.getParameters_map().get(key);
-				string_url = string_url.concat(key+"="+value);
+				string_url = string_url.concat("&"+key+"="+value);
 			}
 		}
 	}
