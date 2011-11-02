@@ -35,8 +35,6 @@ public class DTSigner {
 
   protected String sign(String timestamp, String uri)
     throws java.security.SignatureException {
-	  System.out.println("timestamp "+timestamp);
-	  System.out.println("uri "+uri);
     String Result;
     try {
 	    String data = new String(this.api_username + timestamp + uri);
