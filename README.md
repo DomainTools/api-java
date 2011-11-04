@@ -136,6 +136,23 @@ domainTools.use("reverse-whois").where("terms=DomainTools%20LLC|Seattle").where(
 ```
 This request use the reverse-whois services and add terms and mode parameters in signed mode and require a XML format.
 
+### Traversing an Object ###
+
+You can traverse a response object by using the method "get". It returns the child node specified by the parameter name.
+
+Example :
+
+```java
+JsonNode s = domainTools.use("reverse-ip").on("nameintel.com").toObject();
+Iterator<JsonNode> it = s.get("response").get("ip_addresses").get("domain_names").getElements();
+while(it.hasNext()){
+	System.out.println(it.next());
+}
+
+```
+
+This example shows how to get all the domain names contains in the response.
+
 ## Changelog ##
 
 See the CHANGELOG.md file for details.

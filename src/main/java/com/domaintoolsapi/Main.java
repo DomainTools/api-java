@@ -6,7 +6,11 @@
  */
 package com.domaintoolsapi;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+
+import org.codehaus.jackson.JsonNode;
 
 import com.domaintoolsapi.exceptions.DomainToolsException;
 
@@ -22,9 +26,13 @@ public class Main {
 		DomainTools domainTools = new DomainTools(args[0], args[1]);
 		try {
 			HashMap<String, String> params = new HashMap<String, String>();
-			params.put("qury", "domain%20tools");
-			// Example : we request an xml response when using the domain-search service on domaintools with signed method
-			String s = domainTools.use("domain-search").on("domaintools.com").where(params).where("max_length=2").toXML();
+			params.put("query", "domain%20tools");
+			JsonNode s = domainTools.use("reverse-ip").on("nameintel.com").where("limit=10").toObject();
+			Iterator<JsonNode> it = s.get("response").get("ip_addresses").get("domain_names").getElements();
+			while(it.hasNext()){
+				System.out.println(it.next());
+			}
+			
 		} catch (DomainToolsException e) {
 			e.printStackTrace();
 		}
