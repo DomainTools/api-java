@@ -45,8 +45,8 @@ public class DTService {
 	private static URL url;
 
 	protected static DTResponse execute(DTRequest domainToolsRequest) throws DomainToolsException{
-		//If no format specified, set Json
-		if(domainToolsRequest.getFormat().isEmpty()) domainToolsRequest.setFormat(DTConstants.JSON);
+		//If no format specified, set Object
+		if(domainToolsRequest.getFormat().isEmpty()) domainToolsRequest.setFormat(DTConstants.OBJECT);
 		getLineSeparator();		
 		url = DTURLService.buildURL(domainToolsRequest);
 		return doRequest(domainToolsRequest);

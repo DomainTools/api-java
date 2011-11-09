@@ -38,7 +38,17 @@ public class DTConverterService {
 	    return res;
 	}
 	
-	public static String XML2JSon(String string_xml){		
-		return xmlSerializer.read(string_xml).toString();  
+	public static String XML2JSon(String string_xml){	
+		org.json.JSONObject json = null;
+		string_xml = string_xml.replace("<whoisapi>","");
+		string_xml = string_xml.replace("</whoisapi>","");
+		try {
+			json = org.json.XML.toJSONObject(string_xml);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return json.toString();
 	}
 }

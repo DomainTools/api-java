@@ -27,13 +27,12 @@ public class Main {
 			HashMap<String, String> params = new HashMap<String, String>();
 			params.put("query", "domain%20tools");
 			
-			DTResponse res = domainTools.use("reverse-ip").on("nameintel.com").where("limit=2").toJSON().execute();
+			DTResponse res = domainTools.use("reverse-ip").on("nameintel.com").where("limit=2").toXML().execute();
 			
-			System.out.println(res.getXML());
+			System.out.println(res.getJSON());
 			
-			DTResponse res2 = domainTools.use("reverse-ip").on("nameintel.com").where("limit=2").toXML().execute();
-			
-			System.out.println(res2.getXML());
+			DTResponse res2 = domainTools.use("reverse-ip").on("nameintel.com").where("limit=2").toJSON().execute();
+			System.out.println(res2.getJSON());
 			
 		} catch (DomainToolsException e) {
 			e.printStackTrace();
