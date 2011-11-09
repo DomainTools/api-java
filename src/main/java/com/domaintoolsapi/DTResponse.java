@@ -11,13 +11,13 @@ import org.codehaus.jackson.JsonNode;
  */
 
 public class DTResponse {
-	
+
 	private final String format;
 	private final String domain;
 	private final String product;
 	private final String parameters;
 	private final Map<String, String> parametersMap;
-	
+
 	private String responseJSON;
 	private String responseHTML;
 	private String responseXML;
@@ -35,39 +35,51 @@ public class DTResponse {
 		this.responseObject = null;
 	}
 
-	protected String getResponseJSON() {
+	public String getJSON() {
+		//If we have already a XML response, we convert it in JSON
+		if(this.responseJSON.isEmpty()){
+			if(!this.responseXML.isEmpty()){
+				this.responseJSON = DTConverterService.getDTConverterService().XML2JSon(this.responseXML);
+			}
+		}
 		return responseJSON;
 	}
 
-	protected void setResponseJSON(String responseJSON) {
+	protected void setJSON(String responseJSON) {
 		this.responseJSON = responseJSON;
 	}
 
-	protected String getResponseHTML() {
+	public String getHTML() {
 		return responseHTML;
 	}
 
-	protected void setResponseHTML(String responseHTML) {
+	protected void setHTML(String responseHTML) {
 		this.responseHTML = responseHTML;
 	}
 
-	protected String getResponseXML() {
+	public String getXML() {
+		//If we have already a JSON response, we convert it in XML
+		if(this.responseXML.isEmpty()){
+			if(!this.responseJSON.isEmpty()){
+				this.responseXML = DTConverterService.getDTConverterService().JSon2XML(this.responseJSON);
+			}
+		}
 		return responseXML;
 	}
 
-	protected void setResponseXML(String responseXML) {
+	protected void setXML(String responseXML) {
 		this.responseXML = responseXML;
 	}
-	
-	public void setResponseObject(JsonNode responseObject) {
+
+	protected void setObject(JsonNode responseObject) {
 		this.responseObject = responseObject;
 	}
 
-	protected JsonNode getResponseObject(){
+	public JsonNode getObject(){
 		return this.responseObject;
 	}
 
-	
+
 	/**
 	 * @return the format
 	 */
@@ -101,5 +113,33 @@ public class DTResponse {
 	 */
 	public Map<String, String> getParametersMap() {
 		return parametersMap;
+	}
+	/**
+	 * Return the DomainTools in asked format.
+	 * We cannot return an object as a String, so we return the JSON format
+	 * @return the response in asked format
+	 */
+	public String getSource() {
+		if(getFormat().equals(DTConstants.XML)){
+			return getXML();
+		}
+		else if(getFormat().equals(DTConstants.HTML)){
+			getHTML();
+		}
+		else if(getFormat().equals(DTConstants.OBJECT)){
+			getJSON();
+		}
+		else{
+			getJSON();
+		}
+		return null;
 	}	
+	
+	/**
+	 * getSource's alias
+	 */
+	@Override
+	public String toString(){
+		return getSource();
+	}
 }

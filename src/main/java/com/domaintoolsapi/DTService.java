@@ -74,16 +74,16 @@ public class DTService {
 				sbResponse.append(lineSeparator);
 			}
 			if(domainToolsRequest.getFormat().equals(DTConstants.XML)){
-				domainToolsResponse.setResponseXML(sbResponse.toString());
+				domainToolsResponse.setXML(sbResponse.toString());
 			}
 			else if(domainToolsRequest.getFormat().equals(DTConstants.HTML)){
-				domainToolsResponse.setResponseHTML(sbResponse.toString());
+				domainToolsResponse.setHTML(sbResponse.toString());
 			}
 			else if(domainToolsRequest.getFormat().equals(DTConstants.OBJECT)){
-				domainToolsResponse.setResponseObject(DTNodesService.getDomainToolsNode(sbResponse.toString()));
+				domainToolsResponse.setObject(DTNodesService.getDomainToolsNode(sbResponse.toString()));
 			}
 			else{
-				domainToolsResponse.setResponseJSON(sbResponse.toString());
+				domainToolsResponse.setJSON(sbResponse.toString());
 			}
 			//We set the response in the request to not reuse it later
 			domainToolsRequest.setDomainToolsResponse(domainToolsResponse);

@@ -80,7 +80,7 @@ public class DTRequest {
 	 * @return DomainTools's response
 	 * @throws Exception 
 	 */
-	private DTResponse execute() throws DomainToolsException{
+	public DTResponse execute() throws DomainToolsException{
 		if(isAlreadyExecuted()){
 			return getDomainToolsResponse();
 		}
@@ -97,10 +97,10 @@ public class DTRequest {
 		boolean res = false;
 		if(domainToolsResponse != null){
 			if(domainToolsResponse.equals(this) 
-					&&(format.equals(DTConstants.JSON) && !domainToolsResponse.getResponseJSON().isEmpty()
-							|| format.equals(DTConstants.HTML) && !domainToolsResponse.getResponseHTML().isEmpty()
-							|| format.equals(DTConstants.XML) && !domainToolsResponse.getResponseXML().isEmpty()
-							|| format.equals(DTConstants.OBJECT) && domainToolsResponse.getResponseObject() != null)){
+					&&(format.equals(DTConstants.JSON) && !domainToolsResponse.getJSON().isEmpty()
+							|| format.equals(DTConstants.HTML) && !domainToolsResponse.getHTML().isEmpty()
+							|| format.equals(DTConstants.XML) && !domainToolsResponse.getXML().isEmpty()
+							|| format.equals(DTConstants.OBJECT) && domainToolsResponse.getObject() != null)){
 				res=true;
 			}
 		}
@@ -147,9 +147,9 @@ public class DTRequest {
 	 * @return the XML's String
 	 * @throws Exception 
 	 */
-	public String toXML() throws DomainToolsException {
+	public DTRequest toXML() throws DomainToolsException {
 		setFormat(DTConstants.XML);
-		return  execute().getResponseXML();
+		return  this;
 	}
 
 	/**
@@ -157,9 +157,9 @@ public class DTRequest {
 	 * @return the JSON's String
 	 * @throws Exception 
 	 */
-	public String toJSON() throws DomainToolsException{
+	public DTRequest toJSON() throws DomainToolsException{
 		setFormat(DTConstants.JSON);
-		return  execute().getResponseJSON();
+		return  this;
 	}
 
 	/**
@@ -169,7 +169,7 @@ public class DTRequest {
 	 */
 	public String toHTML() throws DomainToolsException {
 		setFormat(DTConstants.HTML);
-		return  execute().getResponseHTML();
+		return  execute().getHTML();
 	}
 
 	/**
@@ -179,9 +179,9 @@ public class DTRequest {
 	 * @return a JsonNode
 	 * @throws Exception 
 	 */
-	public JsonNode toObject() throws DomainToolsException {
+	public DTRequest toObject() throws DomainToolsException {
 		setFormat(DTConstants.OBJECT);
-		return  execute().getResponseObject();
+		return this;
 	}
 
 	/**

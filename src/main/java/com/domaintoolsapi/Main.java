@@ -6,7 +6,6 @@
  */
 package com.domaintoolsapi;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -27,11 +26,14 @@ public class Main {
 		try {
 			HashMap<String, String> params = new HashMap<String, String>();
 			params.put("query", "domain%20tools");
-			JsonNode s = domainTools.use("reverse-ip").on("nameintel.com").where("limit=10").toObject();
-			Iterator<JsonNode> it = s.get("response").get("ip_addresses").get("domain_names").getElements();
-			while(it.hasNext()){
-				System.out.println(it.next());
-			}
+			
+			DTResponse res = domainTools.use("reverse-ip").on("nameintel.com").where("limit=2").toJSON().execute();
+			
+			System.out.println(res.getXML());
+			
+			DTResponse res2 = domainTools.use("reverse-ip").on("nameintel.com").where("limit=2").toXML().execute();
+			
+			System.out.println(res2.getXML());
 			
 		} catch (DomainToolsException e) {
 			e.printStackTrace();
