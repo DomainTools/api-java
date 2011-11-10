@@ -72,6 +72,17 @@ public class DTRequest {
 		this.domain = domain;
 		return this;
 	}
+	
+	/**
+	 * Define the product<br/>
+	 * Example : reverse-ip
+	 * @param product
+	 * @return this request
+	 */
+	public DTRequest use(String product) {
+		this.product = product;
+		return this;
+	}
 
 	/**
 	 * Set if we use hashed message authentication or not.<br/>
@@ -316,6 +327,4 @@ public class DTRequest {
 	public void setResponseObject(JsonNode responseObject) {
 		this.responseObject = responseObject;
 	}
-
-
 }

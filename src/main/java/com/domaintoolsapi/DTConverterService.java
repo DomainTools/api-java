@@ -6,7 +6,11 @@ import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.xml.XMLSerializer;
 
-
+/**
+ * Convert XML to Json and Json to XML
+ * @author Julien
+ *
+ */
 public class DTConverterService {
 
 	private static XMLSerializer xmlSerializer;
