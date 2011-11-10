@@ -28,16 +28,21 @@ public class DTRequest {
 	 * Format of the request
 	 */
 	private String format;
-	/**
-	 * The DomainTool's response
-	 */
-	private DTResponse domainToolsResponse;
 
 	/**
 	 * Parameters
 	 */
 	private String parameters;
 	private Map<String, String> parametersMap;
+
+	/**
+	 * Responses
+	 */
+	private String responseJSON;
+	private String responseHTML;
+	private String responseXML;
+	private JsonNode responseObject;
+
 
 	/**
 	 * Create a new request
@@ -51,6 +56,10 @@ public class DTRequest {
 		this.parametersMap = new HashMap<String,String>();
 		this.domain = "";
 		this.format = "";
+		this.responseJSON = "";
+		this.responseHTML = "";
+		this.responseXML = "";
+		this.responseObject = null;
 	}
 
 	/**
@@ -80,31 +89,36 @@ public class DTRequest {
 	 * @return DomainTools's response
 	 * @throws Exception 
 	 */
-	public DTResponse execute() throws DomainToolsException{
-		if(isAlreadyExecuted()){
-			return getDomainToolsResponse();
-		}
-		else{
-			return DTService.execute(this);
+	public void execute() throws DomainToolsException{
+		if(!isAlreadyExecuted()){
+			DTService.execute(this);
 		}
 	}
 
 	/**
 	 * Test if the request has been already executed 
 	 * @return true we have already the request's response
+	 * @throws DomainToolsException 
 	 */
-	private boolean isAlreadyExecuted(){
+	private boolean isAlreadyExecuted() throws DomainToolsException{
 		boolean res = false;
-		if(domainToolsResponse != null){
-			if(domainToolsResponse.equals(this) 
-					&&(format.equals(DTConstants.JSON) && !domainToolsResponse.getJSON().isEmpty()
-							|| format.equals(DTConstants.HTML) && !domainToolsResponse.getHTML().isEmpty()
-							|| format.equals(DTConstants.XML) && !domainToolsResponse.getXML().isEmpty()
-							|| format.equals(DTConstants.OBJECT) && domainToolsResponse.getObject() != null)){
-				res=true;
-			}
+		if(format.equals(DTConstants.JSON) && !responseJSON.isEmpty()
+				|| format.equals(DTConstants.HTML) && !responseHTML.isEmpty()
+				|| format.equals(DTConstants.XML) && !responseXML.isEmpty()
+				|| format.equals(DTConstants.OBJECT) && responseObject != null){
+			res=true;
+
 		}
 		return res;
+	}
+	
+	/**
+	 * Re-execute the request
+	 * @return the request's response
+	 * @throws Exception 
+	 */
+	public DTRequest reexecute() throws DomainToolsException{
+		return DTService.execute(this);
 	}
 
 	/**
@@ -112,9 +126,11 @@ public class DTRequest {
 	 * @return the request's response
 	 * @throws Exception 
 	 */
-	public DTResponse refresh() throws Exception{
+	public DTRequest refresh() throws DomainToolsException{
 		return DTService.execute(this);
 	}
+	
+	
 
 	/**
 	 * Add parameters to the request
@@ -149,7 +165,7 @@ public class DTRequest {
 	 */
 	public DTRequest toXML() throws DomainToolsException {
 		setFormat(DTConstants.XML);
-		return  this;
+		return this;
 	}
 
 	/**
@@ -159,7 +175,7 @@ public class DTRequest {
 	 */
 	public DTRequest toJSON() throws DomainToolsException{
 		setFormat(DTConstants.JSON);
-		return  this;
+		return this;
 	}
 
 	/**
@@ -169,7 +185,8 @@ public class DTRequest {
 	 */
 	public String toHTML() throws DomainToolsException {
 		setFormat(DTConstants.HTML);
-		return  execute().getHTML();
+		execute();
+		return responseHTML;
 	}
 
 	/**
@@ -202,7 +219,6 @@ public class DTRequest {
 		this.product = "";
 		this.domain = "";
 		this.format = "";
-		this.domainToolsResponse = null;
 		this.parameters = "";
 		this.parametersMap = new HashMap<String,String>();
 		return this;
@@ -240,11 +256,66 @@ public class DTRequest {
 		return parametersMap;
 	}
 
-	protected void setDomainToolsResponse(DTResponse domainToolsResponse) {
-		this.domainToolsResponse = domainToolsResponse;
+	protected DTRequest getDomainToolsResponse() {
+		return this;
 	}
 
-	protected DTResponse getDomainToolsResponse() {
-		return domainToolsResponse;
+	public String getJSON() throws DomainToolsException{
+		//If we have already a XML response, we convert it in JSON
+		if(this.responseJSON.isEmpty()){
+			if(!this.responseXML.isEmpty()){
+				this.responseJSON = DTConverterService.getDTConverterService().XML2JSon(this.responseXML);
+			}
+			else{
+				setFormat(DTConstants.JSON);
+				execute();
+			}
+		}
+		return responseJSON;
 	}
+
+	public String getXML() throws DomainToolsException{
+		//If we have already a JSON response, we convert it in XML
+		if(this.responseXML.isEmpty()){
+			System.out.println(this.responseJSON);
+			if(!this.responseJSON.isEmpty()){
+				this.responseXML = DTConverterService.getDTConverterService().JSon2XML(this.responseJSON);
+			}
+			else{
+				setFormat(DTConstants.XML);
+				execute();
+			}
+		}
+		return responseXML;
+	}
+
+	public String getHTML() throws DomainToolsException{
+		setFormat(DTConstants.HTML);
+		execute();
+		return responseHTML;
+	}
+
+	public JsonNode getObject() throws DomainToolsException{
+		setFormat(DTConstants.OBJECT);
+		execute();
+		return responseObject;
+	}
+
+	public void setResponseJSON(String responseJSON) {
+		this.responseJSON = responseJSON;
+	}
+
+	public void setResponseHTML(String responseHTML) {
+		this.responseHTML = responseHTML;
+	}
+
+	public void setResponseXML(String responseXML) {
+		this.responseXML = responseXML;
+	}
+
+	public void setResponseObject(JsonNode responseObject) {
+		this.responseObject = responseObject;
+	}
+
+
 }

@@ -29,7 +29,7 @@ public class DTConverterService {
 			o = new org.json.JSONObject(string_json);
 			res = org.json.XML.toString(o);
 			//We have to add this to match with the xml response
-			res = "<?xml version=\"1.0\"?>\n<whoisapi>"+res+"\n</whoisapi>";
+			res = "<?xml version=\"1.0\"?>\n<whoisapi>\n"+res+"\n</whoisapi>";
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

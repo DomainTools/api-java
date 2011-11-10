@@ -44,7 +44,7 @@ public class DTService {
 	private static String lineSeparator ;
 	private static URL url;
 
-	protected static DTResponse execute(DTRequest domainToolsRequest) throws DomainToolsException{
+	protected static DTRequest execute(DTRequest domainToolsRequest) throws DomainToolsException{
 		//If no format specified, set Object
 		if(domainToolsRequest.getFormat().isEmpty()) domainToolsRequest.setFormat(DTConstants.OBJECT);
 		getLineSeparator();		
@@ -52,9 +52,8 @@ public class DTService {
 		return doRequest(domainToolsRequest);
 	}
 
-	private static DTResponse doRequest(DTRequest domainToolsRequest) throws DomainToolsException{
+	private static DTRequest doRequest(DTRequest domainToolsRequest) throws DomainToolsException{
 		int response_code = 0;
-		DTResponse domainToolsResponse = new DTResponse(domainToolsRequest.getFormat(), domainToolsRequest.getDomain(), domainToolsRequest.getProduct(), domainToolsRequest.getParameters(), domainToolsRequest.getParametersMap());
 		StringBuilder sbResponse = new StringBuilder();
 		String sLine = "";
 
@@ -74,19 +73,17 @@ public class DTService {
 				sbResponse.append(lineSeparator);
 			}
 			if(domainToolsRequest.getFormat().equals(DTConstants.XML)){
-				domainToolsResponse.setXML(sbResponse.toString());
+				domainToolsRequest.setResponseXML(sbResponse.toString());
 			}
 			else if(domainToolsRequest.getFormat().equals(DTConstants.HTML)){
-				domainToolsResponse.setHTML(sbResponse.toString());
+				domainToolsRequest.setResponseHTML(sbResponse.toString());
 			}
 			else if(domainToolsRequest.getFormat().equals(DTConstants.OBJECT)){
-				domainToolsResponse.setObject(DTNodesService.getDomainToolsNode(sbResponse.toString()));
+				domainToolsRequest.setResponseObject(DTNodesService.getDomainToolsNode(sbResponse.toString()));
 			}
 			else{
-				domainToolsResponse.setJSON(sbResponse.toString());
+				domainToolsRequest.setResponseJSON(sbResponse.toString());
 			}
-			//We set the response in the request to not reuse it later
-			domainToolsRequest.setDomainToolsResponse(domainToolsResponse);
 
 		}catch (ProtocolException e) {
 			e.printStackTrace();
@@ -97,7 +94,7 @@ public class DTService {
 		}finally{
 			httpConnection.disconnect();
 		}
-		return domainToolsResponse;
+		return domainToolsRequest;
 	}
 
 	private static void manageError(DTRequest domainToolsRequest, int response_code) throws DomainToolsException{

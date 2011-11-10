@@ -8,61 +8,65 @@ The DomainToolsAPI Java Wrapper is a simple connector to access all webservices 
 
 To use the DomainTools API, you need to have a DomainTools Account. [Create and account](https://secure.domaintools.com/join/).
 
-### Installation ###
+## Installation ###
 
-1A- [Download the jar](http://domain.com/api-java/domaintools.api.client-1.0.0.jar) and add it in your Library.
+1A [Download the jar](http://domain.com/api-java/domaintools.api.client-1.0.0.jar) and add it in your Library.
  
-1B- If you use Maven, add this to your pom xml :
+1B If you use Maven, add this to your pom xml :
 
 MAVEN
 
-### Usage ###
+## Usage ##
 
-1- Visit [domaintools.com](http://www.domaintools.com/api/docs/products/) to know the list of available services.
+1. Visit [domaintools.com](http://www.domaintools.com/api/docs/products/) to know the list of available services.
 
 Beware, certains services (like *reverse-whois*) don't need domains to work, but require parameters to work. (Example *terms=Seattle*). 
 
 Please read attentively how to use each service.
 
-2- When you need to use a DomainTools service :
+1. When you need to use a DomainTools service :
 
 1. Add import com.domaintoolsapi.*; 
 
-1. Create a DomainTools object 
+### Create a DomainTools object ### 
 
 ```java
 DomainTools domainTools = new DomainTools("your_username", "your_key");
 ```
 
-1. Set a **product** with the method **use**
+### Create a DomainTools request (DTRequest) ###
+
+To execute a request on DomainTools, you need to set the product which you want to use. Visit [domaintools.com](http://www.domaintools.com/api/docs/products/) to know the list of available services.
+
+#### Set a **product** with the method **use** ####
 
 To set a product, call the method **use** with a **String** representation of the the product name 
-```
-java domainTools.use("whois")
+```java
+DTRequest dtRequest = domainTools.use("whois");
 ```
 
-1. Set a **domain** with the method **on**
+#### Set a **domain** with the method **on** ####
 
 To set a domain, call the method **on** with a **String** representation of the domain name
 ```java
-domainTools.on("domaintools.com")
+dtRequest.on("domaintools.com")
 ```
 
-1. Set a **format**
+#### Set a **format** ####
 
 DomainTools can return responses in diffents formats :
 * JSON with **toJSON()**
 * XML with **toXML()**
 * A Java Object **toObject()** 
 
-1. Set **parameters**
+#### Set **parameters** ####
 
 Some products need parameters to be executed. To set parameters, call the method **where**.
 **where** can use **String** or **Map** argument.
 If you use a String argument, keep in my mind you must replace space character by **%20**
 
 ```java 
-domainTools.use("reverse-ip").on("domaintools.com").where("limit=10").signed(true).toXML() 
+dtRequest.where("limit=10");
 ```
 
 In this example, we limit to 10 the number of domain names's responses.
@@ -71,13 +75,13 @@ We can also use a Map to declare some parameters :
 ```java 
 Map<String, String> parameters = new HashMap<String, String>();
 parameters.put("limit", "10");
-domainTools.use("reverse-ip").on("domaintools.com").where(parameters).signed(true).toXML();
+dtRequest.where(parameters);
 ```
 
 You can use several time where to add multiples parameters :
 
 ```java
-domainTools.use("domain-search").on("domaintools.com").where("query=domain%20tools").where("max_length=2").toXML();
+dtRequest.where("query=domain%20tools").where("max_length=2").toXML();
 ```
 
 or 
@@ -85,29 +89,38 @@ or
 ```java
 HashMap<String, String> params = new HashMap<String, String>();
 params.put("query", "domain%20tools");
-domainTools.use("domain-search").on("domaintools.com").where(params).where("max_length=2").toXML();
+dtRequest.where(params).where("max_length=2");
 ```
 
 Or use the character "&"
 
 ```java
-domainTools.use("domain-search").on("domaintools.com").where("query=domain%20tools&max_length=2").toXML();
+dtRequest.where("query=domain%20tools&max_length=2");
 ```
 
 But you can't use multples arguments in a single method.
 
+#### Reuse a request ####
+
 If you want to reuse a request with different parameters, you can use **resetParameters()** to erase current parameters.
 
 ```java 
-domainTools.resetParameters();
+dtRequest.resetParameters();
 ```
 
 If you also want to erase product, domain and format, but not username and key, use **clear()**.
 
 ```java 
-domainTools.clear();
+dtRequest.clear();
 ```
 
+#### Refresh your results ####
+
+You can refresh your results by using the method **refresh**
+
+```java 
+dtRequest.refresh();
+```
 
 ### Signed Authentication ###
 
@@ -131,7 +144,7 @@ You can combine methods to specify return type, options, etc.:
 
 Example :
 
-```java 
+```java
 domainTools.use("reverse-whois").where("terms=DomainTools%20LLC|Seattle").where("mode=purchase").signed(true).toXML();
 ```
 This request use the reverse-whois services and add terms and mode parameters in signed mode and require a XML format.
@@ -142,9 +155,11 @@ You can traverse a response object by using the method "get". It returns the chi
 
 Example :
 
-```java
-JsonNode s = domainTools.use("reverse-ip").on("nameintel.com").toObject();
-Iterator<JsonNode> it = s.get("response").get("ip_addresses").get("domain_names").getElements();
+```java 
+DTRequest dtRequest = domainTools.use("reverse-ip");
+dtRequest.on("nameintel.com").where("limit=2").toJSON();
+JsonNode jsonNode = dtRequest.getObject();
+Iterator<JsonNode> it = jsonNode.get("response").get("ip_addresses").get("domain_names").getElements();
 while(it.hasNext()){
 	System.out.println(it.next());
 }

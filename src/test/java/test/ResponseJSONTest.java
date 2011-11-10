@@ -20,7 +20,7 @@ public class ResponseJSONTest extends TestCase {
 		ObjectMapper m = new ObjectMapper();
 		String json = "";
 		try {
-			json = domainTools.use("whois").on("domaintools.com").toJSON().execute().getJSON();
+			json = domainTools.use("whois").on("domaintools.com").toJSON().getJSON();
 			m.readTree(json);
 		} catch (JsonProcessingException e) {
 			fail();

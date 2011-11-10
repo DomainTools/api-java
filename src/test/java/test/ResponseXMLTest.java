@@ -24,7 +24,7 @@ public class ResponseXMLTest extends TestCase {
 		DomainTools domainTools = new DomainTools("username", "key");
 		String xml = "";
 		try {
-			xml = domainTools.use("whois").on("domaintools.com").toXML().execute().getXML();
+			xml = domainTools.use("whois").on("domaintools.com").toXML().getXML();
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setValidating(true);
 			factory.setNamespaceAware(true);
