@@ -42,17 +42,15 @@ public class DTService {
 	 * Default line separator
 	 */
 	private static String lineSeparator ;
-	private static URL url;
 
 	protected static DTRequest execute(DTRequest domainToolsRequest) throws DomainToolsException{
 		//If no format specified, set Object
 		if(domainToolsRequest.getFormat().isEmpty()) domainToolsRequest.setFormat(DTConstants.OBJECT);
 		getLineSeparator();		
-		url = DTURLService.buildURL(domainToolsRequest);
-		return doRequest(domainToolsRequest);
+		return doRequest(domainToolsRequest, DTURLService.buildURL(domainToolsRequest));
 	}
 
-	private static DTRequest doRequest(DTRequest domainToolsRequest) throws DomainToolsException{
+	private static DTRequest doRequest(DTRequest domainToolsRequest, URL url) throws DomainToolsException{
 		int response_code = 0;
 		StringBuilder sbResponse = new StringBuilder();
 		String sLine = "";
