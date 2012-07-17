@@ -43,10 +43,8 @@ public class Main {
 			while(it.hasNext()){
 				System.out.println(it.next());
 			}
-
 		} catch (DomainToolsException e) {
 			e.printStackTrace();
 		}
-
 	}
 }

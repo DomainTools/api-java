@@ -58,6 +58,7 @@ public class DTService {
 		String sLine = "";
 
 		try{
+			System.out.println("url "+url);
 			httpConnection = (HttpURLConnection) url.openConnection();
 			httpConnection.setRequestMethod("GET");
 			httpConnection.setDoOutput(true);
@@ -114,7 +115,6 @@ public class DTService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		if(domainToolsRequest.getFormat().equals(DTConstants.JSON)){
 			JsonNode jsonNode = DTNodesService.getDomainToolsNode(sbResponse.toString());
 			errorMessage = jsonNode.get("error").get("message").getTextValue();
@@ -133,6 +133,10 @@ public class DTService {
 				e.printStackTrace();
 			}
 			errorMessage = document.getElementsByTagName("message").item(0).getTextContent();
+		}
+		else if(domainToolsRequest.getFormat().equals(DTConstants.OBJECT)){
+			JsonNode jsonNode = DTNodesService.getDomainToolsNode(sbResponse.toString());
+			errorMessage = jsonNode.get("error").get("message").getTextValue();
 		}
 		switch(response_code){
 		case 400 : throw new BadRequestException(errorMessage);
