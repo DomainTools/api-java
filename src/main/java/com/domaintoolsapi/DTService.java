@@ -120,6 +120,7 @@ public class DTService {
 		else if(domainToolsRequest.getFormat().equals(DTConstants.XML)){
 			DocumentBuilder parser = null;
 			Document document = null;
+			System.out.println("sbResponse "+sbResponse);
 			try {
 				parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				document = parser.parse(new InputSource(new StringReader(sbResponse.toString())));

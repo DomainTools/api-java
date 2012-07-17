@@ -26,11 +26,12 @@ public class Main {
 		DomainTools domainTools = new DomainTools(args[0], args[1]);
 		
 		JsonNode jsonNode;
+		String xml_response;
 		try {
 			//A Whois in XML on domaintools.com
-			DTRequest dtRequest = domainTools.use("whois");
-			dtRequest.on("domaintools.com").toXML();
-			String xml_response = dtRequest.getXML();
+			DTRequest dtRequest = domainTools.use("");
+			dtRequest.on("google.com").toXML();
+			xml_response = dtRequest.getXML();
 			System.out.println(xml_response);
 			
 			//A reverse ip on nameintel.com
@@ -43,6 +44,11 @@ public class Main {
 			while(it.hasNext()){
 				System.out.println(it.next());
 			}
+			//Now, we use the Free API
+			domainTools.setUseFreeAPI(true);
+			dtRequest.on("domaintools.com").toXML();
+			xml_response = dtRequest.getXML();
+			System.out.println(xml_response);
 		} catch (DomainToolsException e) {
 			e.printStackTrace();
 		}

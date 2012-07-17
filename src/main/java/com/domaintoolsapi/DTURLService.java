@@ -11,9 +11,6 @@ import java.util.Set;
  */
 public class DTURLService {
 
-	private static String stringUrl;
-	private static URL url;
-
 	/**
 	 * Build and return an URL
 	 * Add URI, Parameters, Signature and Format
@@ -23,14 +20,19 @@ public class DTURLService {
 	public static URL buildURL(DTRequest domainToolsRequest){
 		String uri = getURI(domainToolsRequest);
 		uri = DTConstants.PATH+"/"+uri;
-		stringUrl = DTConstants.SCHEME+DTConstants.HOST+uri;		
+		String stringUrl = "";
+		Boolean parameters = false;
+		if(domainToolsRequest.getDomainTools().isUseFreeAPI()) stringUrl = DTConstants.SCHEME+DTConstants.HOSTFREE+uri;
+		else stringUrl = DTConstants.SCHEME+DTConstants.HOST+uri;		
+		stringUrl.concat("?");
 		//If the user want to use the signed authentication
-		if(domainToolsRequest.getDomainTools().issigned()) addSignature(domainToolsRequest, uri);
-		else addUserNameAndKey(domainToolsRequest);
-		addParameters(domainToolsRequest);
-		addResponseFormat(domainToolsRequest);
+		if(domainToolsRequest.getDomainTools().isSigned()) stringUrl = addSignature(domainToolsRequest, uri, stringUrl);
+		else stringUrl = addUserNameAndKey(domainToolsRequest, stringUrl);
+		stringUrl = addParameters(domainToolsRequest, stringUrl);
+		stringUrl = addResponseFormat(domainToolsRequest, stringUrl);
+		URL url = null;
 		try {
-			url = new URL(stringUrl);
+			url  = new URL(stringUrl);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -59,8 +61,9 @@ public class DTURLService {
 	/**
 	 * Add parameters to current URL
 	 * @param domainToolsRequest
+	 * @return 
 	 */
-	private static void addParameters(DTRequest domainToolsRequest){
+	private static String addParameters(DTRequest domainToolsRequest, String stringUrl){
 		//String parameters
 		if(!domainToolsRequest.getParameters().isEmpty())
 			stringUrl = stringUrl.concat("&"+domainToolsRequest.getParameters());
@@ -75,23 +78,26 @@ public class DTURLService {
 				stringUrl = stringUrl.concat("&"+key+"="+value);
 			}
 		}
+		return stringUrl;
 	}
 
 	/**
 	 * Add username and key to the URL.<br/>
 	 * It allow to do request without using hashed message authentication
 	 * @param domainToolsRequest
+	 * @return 
 	 */
-	private static void addUserNameAndKey(DTRequest domainToolsRequest) {
-		stringUrl = stringUrl.concat("?api_username="+domainToolsRequest.getDomainTools().getApiUsername()+"&api_key="+domainToolsRequest.getDomainTools().getApiKey());
+	private static String addUserNameAndKey(DTRequest domainToolsRequest, String stringUrl) {
+		return stringUrl.concat("?api_username="+domainToolsRequest.getDomainTools().getApiUsername()+"&api_key="+domainToolsRequest.getDomainTools().getApiKey());
 	}
 
 	/**
 	 * Add hashed message authentication code to the URL's request
 	 * @param domainToolsRequest
 	 * @param uri
+	 * @return 
 	 */
-	private static void addSignature(DTRequest domainToolsRequest, String uri){
+	private static String addSignature(DTRequest domainToolsRequest, String uri, String stringUrl){
 		try {
 			DTSigner signer = new DTSigner(domainToolsRequest.getDomainTools().getApiUsername(), 
 					domainToolsRequest.getDomainTools().getApiKey());
@@ -102,16 +108,21 @@ public class DTURLService {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		return stringUrl;
 	}
 
 	/**
 	 * Add response's format to the URL's request
+	 * By default, we use the json format
 	 * @param domainToolsRequest
+	 * @return 
 	 */
-	private static void addResponseFormat(DTRequest domainToolsRequest){
+	private static String addResponseFormat(DTRequest domainToolsRequest, String stringUrl){
 		if(domainToolsRequest.getFormat().equals(DTConstants.XML)) 
 			stringUrl=stringUrl.concat("&"+DTConstants.FORMAT_XML);
 		else if(domainToolsRequest.getFormat().equals(DTConstants.HTML)) 
 			stringUrl=stringUrl.concat("&"+DTConstants.FORMAT_HTML);
+		return stringUrl;
 	}
+
 }

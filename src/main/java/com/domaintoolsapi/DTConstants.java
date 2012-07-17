@@ -8,6 +8,7 @@ public class DTConstants {
 
 	protected final static String SCHEME = "http://";
 	protected final static String HOST = "api.domaintools.com";
+	protected final static String HOSTFREE = "freeapi.domaintools.com";
 	protected final static int PORT = 80;
 	protected final static String PATH = "/v1";
 

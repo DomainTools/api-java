@@ -10,11 +10,7 @@ To use the DomainTools API, you need to have a DomainTools Account. [Create and 
 
 ## Installation ###
 
-1A [Download the jar](http://domain.com/api-java/domaintools.api.client-1.0.0.jar) and add it in your Library.
- 
-1B If you use Maven, add this to your pom xml :
-
-MAVEN
+[Download the jar](http://domain.com/api-java/domaintools.api.client-1.0.0.jar) and add it in your Library.
 
 ## Usage ##
 
@@ -22,7 +18,7 @@ MAVEN
 
 Beware, certains services (like *reverse-whois*) don't need domains to work, but require parameters to work. (Example *terms=Seattle*). 
 
-Please read attentively how to use each service.
+Please read attentively how to use each services.
 
 1. When you need to use a DomainTools service :
 
@@ -32,6 +28,11 @@ Please read attentively how to use each service.
 
 ```java
 DomainTools domainTools = new DomainTools("your_username", "your_key");
+```
+
+You can switch to the Free API 
+```java
+domainTools.setUseFreeAPI(true);
 ```
 
 ### Create a DomainTools request (DTRequest) ###

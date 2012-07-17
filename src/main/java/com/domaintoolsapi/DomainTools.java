@@ -11,7 +11,8 @@ public class DomainTools {
 
 	private final transient String apiUsername;
 	private final transient String apiKey;
-	private transient boolean signed;
+	private transient boolean signed = true;
+	private boolean useFreeAPI = false;
 
 	/**
 	 * Construct a DomainTools API Object
@@ -23,7 +24,6 @@ public class DomainTools {
 	public DomainTools(String apiUsername, String apiKey){
 		this.apiUsername = apiUsername;
 		this.apiKey = apiKey;
-		this.signed = true;
 	}
 	
 	/**
@@ -99,11 +99,23 @@ public class DomainTools {
 		return apiKey;
 	}
 
-	public boolean issigned() {
+	public boolean isSigned() {
 		return signed;
 	}
 
 	public void setsigned(boolean signed) {
 		this.signed = signed;
+	}
+
+	public boolean isUseFreeAPI() {
+		return useFreeAPI;
+	}
+
+	/**
+	 * Switch to the Free API mode
+	 * @param useFreeAPI
+	 */
+	public void setUseFreeAPI(boolean useFreeAPI) {
+		this.useFreeAPI = useFreeAPI;
 	}	
 }
