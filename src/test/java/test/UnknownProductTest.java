@@ -11,7 +11,7 @@ public class UnknownProductTest extends TestCase {
 	public void testUnknownProduct(){
 		DomainTools domainTools = new DomainTools("username", "key");
 			try {
-				domainTools.use("unknown product").on("domaintools.com").toJSON();
+				domainTools.use("unknown product").on("domaintools.com").toJSON().getJSON();
 				fail(); //unreachable because an exception should be launch
 			} catch (DomainToolsException e) {
 				if(!(e instanceof BadRequestException)) fail();

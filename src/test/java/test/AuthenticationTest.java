@@ -11,7 +11,7 @@ public class AuthenticationTest extends TestCase {
 	public void testAuthentication(){
 		DomainTools domainTools = new DomainTools("bad_username", "bad_key");
 			try {
-				domainTools.use("").on("google.com").toJSON();
+				domainTools.use("").on("google.com").toJSON().getJSON();
 				fail(); //unreachable because an exception should be launch
 			} catch (DomainToolsException e) {
 				if(!(e instanceof NotAuthorizedException)) fail();

@@ -9,6 +9,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -114,8 +116,10 @@ public class DTService {
 			e.printStackTrace();
 		}
 		if(domainToolsRequest.getFormat().equals(DTConstants.JSON)){
-			JsonNode jsonNode = DTNodesService.getDomainToolsNode(sbResponse.toString());
-			errorMessage = jsonNode.get("error").get("message").getTextValue();
+			Matcher m = Pattern.compile("</h1>(.*)</body>").matcher(sbResponse.toString().replace("\n", ""));
+			if(m.find())
+				errorMessage = m.group(1);
+			
 		}
 		else if(domainToolsRequest.getFormat().equals(DTConstants.XML)){
 			DocumentBuilder parser = null;
